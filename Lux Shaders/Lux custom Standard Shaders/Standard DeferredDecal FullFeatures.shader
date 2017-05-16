@@ -23,7 +23,7 @@ Shader "Lux/Deferred Decals/Standard Lighting/Full Features"
 		[Space(4)]
 		[NoScaleOffset] _ParallaxMap ("Height (G) (Mix Mapping: Height2 (A) Mix Map (B)) PuddleMask (R)", 2D) = "white" {}
 		_UVRatio("UV Ratio (XY) Scale(Z)", Vector) = (1, 1, 1, 0)
-		_ParallaxTiling ("Parallax Tiling", Float) = 1
+		_ParallaxTiling ("Mask Tiling", Float) = 1
 		_Parallax ("Height Scale", Range (0.005, 0.1)) = 0.02
 		[Space(4)]
 		[Toggle(EFFECT_BUMP)] _EnablePOM("Enable POM", Float) = 0.0

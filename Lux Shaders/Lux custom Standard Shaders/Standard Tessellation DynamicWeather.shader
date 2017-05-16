@@ -18,7 +18,7 @@
             [NoScaleOffset] _ParallaxMap ("Height (G) (Mix Mapping: Height2 (A) Mix Map (B)) PuddleMask (R)", 2D) = "white" {}
             // As we can't access MainTex_ST (Tiling) in surface shaders
             [Lux_TextureTilingDrawer] _ParallaxToBaseRatio ("MainTex Tiling", Vector) = (1,1,0,0)
-            _ParallaxTiling ("Parallax Tiling", Float) = 1
+            _ParallaxTiling ("Mask Tiling", Float) = 1
             _Parallax ("Height Scale", Range (0.0, 1.0)) = 0.02
             [Space(4)]
             _EdgeLength ("Edge Length Limit", Range(1, 40.0)) = 5
