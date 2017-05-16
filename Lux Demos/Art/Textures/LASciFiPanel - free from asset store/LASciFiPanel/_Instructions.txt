@@ -1,0 +1,38 @@
+CUSTOM Substances by Living Artz
+PBR Sci-Fi Panel
+INSTRUCTIONS
+
+IMPORTANT
+Shaders for each set of substances have been set up for you.  It is important to ensure you have the relevant Alloy3 or Skyshop plugins installed to your project prior to opening either ofpackages, 
+please ensure the relevant Alloy3 or Skyshop plugin is installed. This will save you the trouble of having to setup shaders manually.
+
+*** Ensure you set the Unity Color Space to Linear as follows: Edit/Project Settings/Player/ now set Color Space to Linear.***
+
+Substances
+These are set at the default 512x512, however can be increased up to 2048x2048 in the Unity Inspector.
+
+UNITY 5 PBR Substances INSTRUCTIONS
+Metallic/Roughness and Specular/Glossiness PBR workflows are automatically detected and generate the required outputs so either workflow can be used.
+UBR Shader support. The Unity 5 Substances are also compatible with UBER Shaders, however for correct Height output compatiblity just click the "UBER Shader" check box in the Unity Inspector for each Substance.
+Also set the Metallic and Smoothness sliders in the UBER shader to 1.
+
+Sample Scene
+The sample displays the use of the basic included models that are UV ready for the Substance Panels and show how to make use of the Window design Panels. 
+
+Decal Masks
+Use grayscale png bitmaps at 2048x2048 resolution.  If your substance is set to a lower resolution, it will adjust your Decal Mask accordingly. 
+
+Video Tutorial
+Please visit our Youtube channel http://youtu.be/3wNal3OZ2Yk
+
+Workflow Tip:
+For a faster experience with Unity, edit your Substance materials/colours at the default 512x512 resolution. 
+Once you are satified with your colour theme, increase the output resolutions to your desired choice or output to bitmaps using the free Substance Player from Allegorithmic.
+
+
+Outputting your Substances to Bitmap
+Once you have made your Substance setting preferences, you may wish to output them to traditional bitmaps.  Substance Player (free from www.allegorithmic.com) is
+a perfect tool for this purpose.  a couple of notes when using the Alloy or Skyshop Substances with Substance Player:
+1. You will need to apply a decal mask to each of the two decal input slots.  If no decal is required, simply use the all black decal mask included with this package.
+
+Note: When exporting to bitmap, the Specular map will automatically contain the respective Glossiness map.  Like wise for Alloy 3 packed map and Skyshop packed outputs.

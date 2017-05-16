@@ -1,0 +1,543 @@
+fileFormatVersion: 2
+guid: 102bc1ffc24a64e87ac1f9c2e5d1f4b8
+timeCreated: 1493629773
+licenseType: Pro
+SubstanceImporter:
+  serializedVersion: 5
+  materialInstances:
+  - serializedVersion: 16
+    name: LASciFiPanel
+    prototypeName: LASciFiPanel
+    shaderName: 
+    shader: {fileID: 4800000, guid: 5e34a73ca109940e595b0dbea95f98e9, type: 3}
+    shaderKeywords: EFFECT_BUMP _EMISSION _EMISSION_TEXTURED _NORMALMAP _PARALLAXMAP
+      _PARALLAX_POM _SNOW _WETNESS_NONE
+    renderQueue: -1
+    lightmapFlags: 1
+    inputs:
+    - name: mat6
+      value:
+        scalar[0]: 11
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: $outputsize
+      value:
+        scalar[0]: 8
+        scalar[1]: 8
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: $randomseed
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: uber
+      value:
+        scalar[0]: 1
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: dirt
+      value:
+        scalar[0]: 0.65
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: wear
+      value:
+        scalar[0]: 0.85
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat1
+      value:
+        scalar[0]: 11
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat1_custom
+      value:
+        scalar[0]: 0
+        scalar[1]: 0.485222
+        scalar[2]: 0.909804
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat2
+      value:
+        scalar[0]: 15
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat2_custom
+      value:
+        scalar[0]: 0.34131703
+        scalar[1]: 0.39219564
+        scalar[2]: 0.43382353
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat3
+      value:
+        scalar[0]: 6
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat3_custom
+      value:
+        scalar[0]: 0.207843
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat4
+      value:
+        scalar[0]: 11
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat4_custom
+      value:
+        scalar[0]: 0.858824
+        scalar[1]: 0.862745
+        scalar[2]: 0.862745
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat5
+      value:
+        scalar[0]: 12
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat5_custom
+      value:
+        scalar[0]: 0.30882353
+        scalar[1]: 0.30882353
+        scalar[2]: 0.30882353
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat7
+      value:
+        scalar[0]: 16
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: mat7_custom
+      value:
+        scalar[0]: 0.459297
+        scalar[1]: 0.500877
+        scalar[2]: 0.537255
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: mat6_custom
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: light1_custom
+      value:
+        scalar[0]: 0.39705884
+        scalar[1]: 0.9750506
+        scalar[2]: 1
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: decal1_custom
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: decal2_custom
+      value:
+        scalar[0]: 1
+        scalar[1]: 0.6
+        scalar[2]: 0.007843138
+        scalar[3]: 1
+        texture: {instanceID: 0}
+    - name: input_decal1
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {fileID: 2800000, guid: 06789d5ed842133429d742f745c4dcdc, type: 3}
+    - name: input_decal2
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {fileID: 2800000, guid: 5b164a0a4d1e9114b929fc7293dd3d19, type: 3}
+    materialInformation:
+      serializedVersion: 5
+      offset: {x: 0, y: 0}
+      scale: {x: 1, y: 1}
+      generateMipmaps: 1
+      generateAllOutputs: 0
+      animationUpdateRate: 0
+    materialProperties:
+      serializedVersion: 3
+      texEnvs:
+      - _BumpMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _CombinedMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _DetailAlbedoMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _DetailMask:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _DetailNormalMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _EmissionMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _MainTex:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _MetallicGlossMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _MetallicGlossMap2:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _OcclusionMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      - _ParallaxMap:
+          texture: {instanceID: 0}
+          scale: {x: 1, y: 1}
+          offset: {x: 0, y: 0}
+      floats:
+      - _BendNormalsFreq: 4
+      - _BendNormalsStrength: 0.05
+      - _BumpScale: 1
+      - _BumpScale2: 1
+      - _Cull: 3
+      - _CullShadowPass: 3
+      - _CurvatureCustomU: 0
+      - _CurvatureCustomV: 0
+      - _CurvatureMultU: 1
+      - _CurvatureMultV: 1
+      - _Cutoff: 0.5
+      - _DecalMask: 1
+      - _DecalMaskGUI: 3
+      - _Depth: 0.094
+      - _DepthReductionDistance: 20
+      - _DepthWrite: 0
+      - _DetailEmissiveness: 0
+      - _DetailGloss: 1
+      - _DetailMetalness: 1
+      - _DetailNormalLerp: 0
+      - _DetailNormalMapScale: 1
+      - _DetailSpecLerp: 1
+      - _DetailUVMult: 1
+      - _DiffuseScatter: 1
+      - _DiffuseScatteringBias: 0
+      - _DiffuseScatteringBias2: 0
+      - _DiffuseScatteringContraction: 8
+      - _DiffuseScatteringContraction2: 8
+      - _DiffuseScatteringEnabled: 0
+      - _DiffuseScatteringExponent: 8
+      - _DiffuseScatteringOffset: 0
+      - _DistSteps: 20
+      - _DistStepsShadows: 64
+      - _DoubleSided: 0
+      - _DropletsAnimSpeed: 10
+      - _DropletsTiling: 1
+      - _DstBlend: 0
+      - _EmissionPulsateSpeed: 0
+      - _FlowCycleScale: 2
+      - _Frost: 0
+      - _FrostFromGlobal: 0
+      - _Glitter: 0
+      - _GlitterAnimationFrequency: 0.02
+      - _GlitterColorization: 0.2
+      - _GlitterDensity: 0.2
+      - _GlitterFilter: -1
+      - _GlitterMask: 0
+      - _GlitterShown: 1
+      - _GlitterTiling: 1
+      - _GlossMapScale: 1
+      - _GlossMax: 1
+      - _GlossMin: 0
+      - _Glossiness: 0.5
+      - _Glossiness2: 0.5
+      - _GlossyReflections: 1
+      - _HeightMapInfluence: 1
+      - _Lighting: 0
+      - _LinearSteps: 19
+      - _Lux_FlowInterval: 1
+      - _Lux_FlowNormalStrength: 1
+      - _Lux_FlowNormalTiling: 2
+      - _Lux_FlowRefraction: 0.02
+      - _Lux_FlowSpeed: 0.05
+      - _MainShown: 1
+      - _Metallic: 0
+      - _Metallic2: 0
+      - _MinPulseBrightness: 0
+      - _MixMappingControl: 0
+      - _Mode: 0
+      - _OcclusionInfluence: 1
+      - _OcclusionStrength: 1
+      - _OcclusionStrength2: 0
+      - _Occlusion_from_albedo_alpha: 0
+      - _POM: 1
+      - _POMCurvatureType: 0
+      - _POMPrecomputedFlag: 0
+      - _POMShadows: 0
+      - _POMShown: 1
+      - _POM_BottomCut: 0
+      - _POM_ExtrudeVolume: 0
+      - _POM_LinearSteps: 20
+      - _POM_MeshIsVolume: 0
+      - _PanEmissionMask: 0
+      - _PanUSpeed: 0
+      - _PanVSpeed: 0
+      - _Parallax: 0.0447
+      - _Parallax2: 0.04
+      - _ParallaxTiling: 1
+      - _Phong: 0
+      - _Pierceable: 0
+      - _PresetsShown: 0
+      - _PuddleMask: 0
+      - _PuddleMaskTiling: 1
+      - _PulsateEmission: 0
+      - _RainIntensity: 1
+      - _RainIntensityFromGlobal: 0
+      - _Refraction: 0.02
+      - _RefractionBumpScale: 0.5
+      - _RefractionChromaticAberration: 0
+      - _ReliefMIPbias: 0
+      - _RippleAnimSpeed: 0.5
+      - _RippleRefraction: 0.3
+      - _RippleSpecFilter: 0.02
+      - _RippleStrength: 0.5
+      - _RippleStrengthFromGlobal: 0
+      - _RippleTiling: 1
+      - _ScatteringPower: 4
+      - _SecOcclusionStrength: 0
+      - _SecondaryShown: 1
+      - _ShadowCull: 2
+      - _ShadowMIPbias: 0
+      - _ShadowStrength: 1
+      - _SmoothnessTextureChannel: 0
+      - _Snow: 1
+      - _SnowBumpMacro: 0.1
+      - _SnowBumpMicro: 0.08
+      - _SnowBumpMicroFromGlobal: 0
+      - _SnowDeepSmoothen: 4
+      - _SnowDetailStrength: 0.3
+      - _SnowDetailTiling: 8
+      - _SnowDiffuseScatteringExponent: 6
+      - _SnowDiffuseScatteringOffset: 0.4
+      - _SnowDissolve: 2
+      - _SnowDissolveFromGlobal: 0
+      - _SnowDissolveMaskOcclusion: 0
+      - _SnowGlitterColorFromGlobal: 0
+      - _SnowHeightThreshold: -10000
+      - _SnowHeightThresholdTransition: 1000
+      - _SnowLevelFromGlobal: 0
+      - _SnowMacroTiling: 1
+      - _SnowMapping: 0
+      - _SnowMaskTiling: 0.3
+      - _SnowMicroTiling: 0.1
+      - _SnowNormalStrength: 1
+      - _SnowOpacity: 0.5
+      - _SnowShown: 1
+      - _SnowSlopeDamp: 0.75
+      - _SnowSpecGlossFromGlobal: 0
+      - _SnowTiling: 2
+      - _SnowWorldMapping: 1
+      - _Softness: 2
+      - _SoftnessFade: 0.4
+      - _SpecularHighlights: 1
+      - _SrcBlend: 1
+      - _SyncWaterOfMaterials: 0
+      - _Tan2ObjCustomU: 1
+      - _Tan2ObjCustomV: 1
+      - _Tan2ObjMultU: 1
+      - _Tan2ObjMultV: 1
+      - _Tess: 9
+      - _TessDepth: 0.05
+      - _TessEdgeLengthLimit: 5
+      - _TessOffset: 0.1
+      - _Translucency: 0
+      - _TranslucencyConstant: 0.1
+      - _TranslucencyDeferredLightIndex: 0
+      - _TranslucencyExponent: 30
+      - _TranslucencyNDotL: 0
+      - _TranslucencyNormalOffset: 0.05
+      - _TranslucencyOcclusion: 0
+      - _TranslucencyPointLightDirectionality: 0.7
+      - _TranslucencyShown: 1
+      - _TranslucencyStrength: 0.5
+      - _TranslucencySuppressRealtimeShadows: 0.5
+      - _UVSec: 0
+      - _UVSecOcclusion: 0
+      - _UVSecOcclusionLightmapPacked: 0
+      - _UV_Clip: 0
+      - _UseCombinedMap: 0
+      - _UseMixMapping: 0
+      - _UsePOM: 1
+      - _WaterSlopeDamp: 0.5
+      - _WetDroplets: 0
+      - _WetRipples: 0
+      - _Wetness: 0
+      - _WetnessConst: 0
+      - _WetnessConstFromGlobal: 0
+      - _WetnessDarkening: 2
+      - _WetnessEmissiveness: 0
+      - _WetnessEmissivenessWrap: 0
+      - _WetnessFlowGlobalTime: 1
+      - _WetnessLevel: 1
+      - _WetnessLevelFromGlobal: 0
+      - _WetnessMergeWithSnowPerMaterial: 0
+      - _WetnessNormMIP: 5
+      - _WetnessNormStrength: 2
+      - _WetnessNormalInfluence: 0.5
+      - _WetnessShown: 1
+      - _WetnessUVMult: 1
+      - _ZWrite: 1
+      - maxDist: 10
+      - minDist: 1
+      colors:
+      - _Color: {r: 1, g: 1, b: 1, a: 1}
+      - _Color2: {r: 1, g: 1, b: 1, a: 1}
+      - _CurvatureMultOffset: {r: 0, g: 0, b: 0, a: 0}
+      - _CutoffEdgeGlow: {r: 0, g: 0, b: 0, a: 0.02}
+      - _DetailColor: {r: 1, g: 1, b: 1, a: 1}
+      - _DetailSpecGloss: {r: 1, g: 1, b: 1, a: 1}
+      - _DiffuseScatteringCol: {r: 0, g: 0, b: 0, a: 0}
+      - _DiffuseScatteringCol2: {r: 0, g: 0, b: 0, a: 0}
+      - _DiffuseScatteringColor: {r: 0, g: 0, b: 0, a: 0}
+      - _DiffuseScatteringColor2: {r: 0, g: 0, b: 0, a: 0}
+      - _EmissionColor: {r: 3, g: 3, b: 3, a: 1}
+      - _GlitterColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.2}
+      - _GlitterColor2: {r: 0.8, g: 0.8, b: 0.8, a: 0.2}
+      - _SnowAccumulation: {r: 0, g: 1, b: 0, a: 0}
+      - _SnowColorAndCoverage: {r: 1, g: 1, b: 1, a: 0.25}
+      - _SnowDetailTiling: {r: 4, g: 4, b: 0, a: 0}
+      - _SnowDiffuseScatteringColor: {r: 1, g: 1, b: 1, a: 0}
+      - _SnowEmissionTransparency: {r: 0.09999997, g: 0.09999997, b: 0.09999997, a: 1}
+      - _SnowGlitterColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.2}
+      - _SnowMaskTiling: {r: 0.3, g: 0.3, b: 0, a: 0}
+      - _SnowSpecGloss: {r: 0.09999997, g: 0.09999997, b: 0.09999997, a: 0.15}
+      - _SnowTiling: {r: 2, g: 2, b: 0, a: 0}
+      - _SnowTranslucencyColor: {r: 0.75, g: 1, b: 1, a: 1}
+      - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+      - _SpecColor2: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+      - _Tan2ObjectMultOffset: {r: 0, g: 0, b: 1, a: 1}
+      - _TranslucencyColor: {r: 1, g: 1, b: 1, a: 1}
+      - _TranslucencyColor2: {r: 1, g: 1, b: 1, a: 1}
+      - _UVRatio: {r: 1, g: 1, b: 0, a: 0}
+      - _UV_Clip_Borders: {r: 0, g: 0, b: 1, a: 1}
+      - _WaterAccumulationCracksPuddles: {r: 0, g: 1, b: 0, a: 1}
+      - _WaterAccumulationCracksPuddles2: {r: 0, g: 1, b: 0, a: 1}
+      - _WaterColor: {r: 0, g: 0, b: 0, a: 0}
+      - _WaterColor2: {r: 0, g: 0, b: 0, a: 0}
+      - _WetnessColor: {r: 0, g: 0, b: 0, a: 0}
+      - _WetnessSpecGloss: {r: 0.049999982, g: 0.049999982, b: 0.049999982, a: 0.7}
+      - bumpMap2TexelSize: {r: 1, g: 1, b: 1, a: 1}
+      - bumpMapTexelSize: {r: 0.001953125, g: 0.001953125, b: 512, a: 512}
+      - heightMapTexelSize: {r: 0.001953125, g: 0.001953125, b: 512, a: 512}
+    textureParameters:
+    - name: LASciFiPanel_diffuse
+      alphaSource: 6
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_normal
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_specular
+      alphaSource: 7
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_emissive
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_ambientOcclusion
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_height
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_baseColor
+      alphaSource: 6
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    - name: LASciFiPanel_metallic
+      alphaSource: 7
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    textureAssignments:
+    - shaderProp: _BumpMap
+      material: {instanceID: 0}
+      baseUID: 932778161
+    - shaderProp: _MainTex
+      material: {instanceID: 0}
+      baseUID: 932778173
+    - shaderProp: _EmissionMap
+      material: {instanceID: 0}
+      baseUID: 932778123
+    - shaderProp: _MetallicGlossMap
+      material: {instanceID: 0}
+      baseUID: 932778163
+    - shaderProp: _OcclusionMap
+      material: {instanceID: 0}
+      baseUID: 932778125
+    - shaderProp: _ParallaxMap
+      material: {instanceID: 0}
+      baseUID: 912867125
+    buildTargetSettings:
+    - serializedVersion: 2
+      buildTarget: 
+      textureWidth: 512
+      textureHeight: 512
+      textureFormat: 0
+      loadingBehavior: 1
+  deletedPrototypes: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

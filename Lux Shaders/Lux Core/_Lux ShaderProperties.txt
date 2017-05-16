@@ -1,0 +1,102 @@
+//	Lux primary texture set
+	[Space(4)]
+	[Header(Primary Texture Set _____________________________________________________ )]
+	[Space(4)]
+	_Color ("Color", Color) = (1,1,1,1)
+	[Space(4)]
+	_MainTex ("Albedo (RGB)", 2D) = "white" {}
+	[NoScaleOffset] _BumpMap ("Normalmap", 2D) = "bump" {}
+	[NoScaleOffset] _SpecGlossMap("Specular", 2D) = "black" {}
+
+//	Lux mix mapping - secondary texture set
+	[Space(4)]
+	[Header(Secondary Texture Set ___________________________________________________ )]
+	[Space(4)]
+	_Color2 ("Color", Color) = (1,1,1,1)
+	[Space(4)]
+	_DetailAlbedoMap("Detail Albedo (RGB) Occlusion (A)", 2D) = "grey" {}
+	[NoScaleOffset] _DetailNormalMap("Normal Map", 2D) = "bump" {}
+	[NoScaleOffset] _SpecGlossMap2 ("Specular", 2D) = "black" {}
+	
+//	Lux parallax extrusion properties
+	[Space(4)]
+	[Header(Parallax Extrusion ______________________________________________________ )]
+	[Space(4)]
+	[NoScaleOffset] _ParallaxMap ("Height (G) (Mix Mapping: Height2 (A) Mix Map (B)) PuddleMask (R)", 2D) = "white" {}
+	[Lux_Vector3DDrawer] _UVRatio("UV Ratio (XY) Scale(Z)", Vector) = (1, 1, 1, 0)
+	_ParallaxTiling ("Parallax Tiling", Float) = 1
+	_Parallax ("Height Scale", Range (0.005, 0.1)) = 0.02
+	[Space(4)]
+	[Toggle(EFFECT_BUMP)] _EnablePOM("Enable POM", Float) = 0.0
+	_LinearSteps("- Linear Steps", Range(4, 40.0)) = 20
+
+//  Lux tessellation properties
+    [Space(4)]
+    [Header(Tessellation ______________________________________________________ )]
+    [Space(4)]
+    [NoScaleOffset] _ParallaxMap ("Height (G) (Mix Mapping: Height2 (A) Mix Map (B)) PuddleMask (R)", 2D) = "white" {}
+    // As we can't access MainTex_ST (Tiling) in surface shaders
+    [Lux_TextureTilingDrawer] _ParallaxToBaseRatio ("MainTex Tiling", Vector) = (1,1,0,0)
+    _ParallaxTiling ("Parallax Tiling", Float) = 1
+    _Parallax ("Height Scale", Range (0.0, 1.0)) = 0.02
+    [Space(4)]
+    _EdgeLength ("Edge Length Limit", Range(1, 40.0)) = 5
+    _MinDist ("Near Distance", float) = 7
+    _MaxDist ("Far Distance", float) = 25
+    _Phong ("Phong Smoothing", Range(0, 20.0)) = 1
+    // _Tess ("Tessellation", Range(1,32)) = 4
+
+//	Lux dynamic weather properties
+
+//	Lux Snow
+	[Space(4)]
+	[Header(Dynamic Snow ______________________________________________________ )]
+	[Space(4)]
+	[Enum(Local Space,0,World Space,1)] _SnowMapping ("Snow Mapping", Float) = 0
+	[Lux_HelpDrawer] _HelpSnowMapping ("If 'Snow Mapping' is set to 'World Space‘ tiling and strength values have to be set up globally. You also should check 'UV Ratio' and 'Scale' in case you use POM.", Float) = 0
+	[Space(4)]
+	_SnowSlopeDamp("Snow Slope Damp", Range (0.0, 8.0)) = 1.0
+	[Lux_SnowAccumulationDrawer] _SnowAccumulation("Snow Accumulation", Vector) = (0,1,0,0)
+	[Space(4)]
+	[Lux_TextureTilingDrawer] _SnowTiling ("Snow Tiling", Vector) = (2,2,0,0)
+	_SnowNormalStrength ("Snow Normal Strength", Range (0.0, 2.0)) = 1.0
+	[Lux_TextureTilingDrawer] _SnowMaskTiling ("Snow Mask Tiling", Vector) = (0.3,0.3,0,0)
+	[Lux_TextureTilingDrawer] _SnowDetailTiling ("Snow Detail Tiling", Vector) = (4.0,4.0,0,0)
+	_SnowDetailStrength ("Snow Detail Strength", Range (0.0, 1.0)) = 0.5
+	_SnowOpacity("Snow Opacity", Range (0.0, 1.0)) = 0.5
+
+//	Lux Wetness
+	[Space(4)]
+	[Header(Dynamic Wetness ______________________________________________________ )]
+	[Space(4)]
+	_WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
+	[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
+	_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
+
+	[Header(Texture Set 1)]
+	_WaterColor("Water Color (RGB) Opacity (A)", Color) = (0,0,0,0)
+	[Lux_WaterAccumulationDrawer] _WaterAccumulationCracksPuddles("Water Accumulation in Cracks and Puddles", Vector) = (0,1,0,1)
+	// Mix mapping enabled so we need a 2nd Input
+	[Header(Texture Set 2)]
+	_WaterColor2("Water Color (RGB) Opacity (A)", Color) = (0,0,0,0)
+	[Lux_WaterAccumulationDrawer] _WaterAccumulationCracksPuddles2("Water Accumulation in Cracks and Puddles", Vector) = (0,1,0,1)
+	
+	[Space(4)]
+	_Lux_FlowNormalTiling("Flow Normal Tiling", Float) = 2.0
+	_Lux_FlowSpeed("Flow Speed", Range (0.0, 2.0)) = 0.05
+	_Lux_FlowInterval("Flow Interval", Range (0.0, 8.0)) = 1
+	_Lux_FlowRefraction("Flow Refraction", Range (0.0, 0.1)) = 0.02
+	_Lux_FlowNormalStrength("Flow Normal Strength", Range (0.0, 2.0)) = 1.0
+
+//	Lux diffuse Scattering properties
+    [Header(Diffuse Scattering Texture Set 1 ______________________________________ )]
+    [Space(4)]
+    _DiffuseScatteringCol("Diffuse Scattering Color", Color) = (0,0,0,1)
+    _DiffuseScatteringBias("Scatter Bias", Range(0.0, 0.5)) = 0.0
+    _DiffuseScatteringContraction("Scatter Contraction", Range(1.0, 10.0)) = 8.0
+//	As we use mix mapping
+    [Header(Diffuse Scattering Texture Set 2 ______________________________________ )]
+    [Space(4)]
+    _DiffuseScatteringCol2("Diffuse Scattering Color", Color) = (0,0,0,1)
+    _DiffuseScatteringBias2("Scatter Bias", Range(0.0, 0.5)) = 0.0
+    _DiffuseScatteringContraction2("Scatter Contraction", Range(1.0, 10.0)) = 8.0

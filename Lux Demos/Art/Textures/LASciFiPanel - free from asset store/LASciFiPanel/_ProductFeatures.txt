@@ -1,0 +1,24 @@
+CUSTOM Substances by Living Artz
+PBR Sci-Fi Panel
+
+Product Features
+
+1 Unique Substance Design. Endless Material themes!
+
+- 1 x Unity 5 Std/Std(Spec setup)/UBER Shader Ready Substance
+- 1 x Alloy 3 (Unity 5) Shader Ready Substance
+- 1 x Skyshop (Unity 5) Shader Ready Substance
+
+- 2 x Custom Decal inputs per Substance (import your own grayscale png maps to further customize your panel)
+- Material Presets, Metal, Plastic, Paint, Rubber, Emissive
+- Custom Colors
+- Randomized Dirt
+- Randomized Wear (paint chipping)
+- 2 x Sample Decal Masks
+- up to 2048 output
+
+1 x Floor Panel design
+
+Up to to 2048x2048 resolution.
+
+Optional use: Use Substance Player if you wish to output your desired material/color themes to bitmaps.
