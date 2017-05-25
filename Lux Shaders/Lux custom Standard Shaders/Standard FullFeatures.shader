@@ -158,7 +158,7 @@
 			float3x3 rotation = float3x3( v.tangent.xyz, binormal, v.normal.xyz );
 			// Store FlowDirection
 			o.lux_flowDirection = ( mul(rotation, mul(unity_WorldToObject, float4(0,1,0,0)).xyz) ).xy;
-			// Store world position and distance to camera
+			// Store distance to camera and object scale
 			float3 worldPosition = mul(unity_ObjectToWorld, v.vertex);
 			o.lux_DistanceScale.x = distance(_WorldSpaceCameraPos, worldPosition);
 			o.lux_DistanceScale.y = length( mul(unity_ObjectToWorld, float4(1.0, 0.0, 0.0, 0.0)) );

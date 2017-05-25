@@ -747,7 +747,7 @@ half4 fragForwardBase (VertexOutputForwardBase i
 	UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
 
 //	Lux 
-	half specularIntensity = 1.0f;
+	half specularIntensity = (s.specColor.r == 0.0) ? 0.0 : 1.0;
 	fixed3 diffuseNormal = s.normalWorld;
 	half3 diffuseLightDir = 0;
 	half ndotlDiffuse = 0;
@@ -970,7 +970,7 @@ half4 fragForwardAdd (VertexOutputForwardAdd i
 	UnityIndirect noIndirect = ZeroIndirect ();
 
 //	Lux
-	half specularIntensity = 1.0f;
+	half specularIntensity = (s.specColor.r == 0.0) ? 0.0 : 1.0;
 	fixed3 diffuseNormal = s.normalWorld;
 	half3 diffuseLightDir = 0;
 	half ndotlDiffuse = 0;
