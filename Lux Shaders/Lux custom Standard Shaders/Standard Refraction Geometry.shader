@@ -95,7 +95,11 @@
 			viewSpaceNormal = viewSpaceNormal * _GeoInfluence + o.Normal * _BumpInfluence;
 			
 			half2 offset = viewSpaceNormal.xy * _GrabTexture_TexelSize.xy;
-			distortedGrabUVs.xy = IN.grabUV.xy + offset * (_Refraction * IN.grabUV.z);
+			distortedGrabUVs.xy = IN.grabUV.xy + offset * (_Refraction * ( 
+				#if defined(UNITY_REVERSED_Z)
+					1.0 - 
+				#endif
+				IN.grabUV.z));
 
 		//	Do not grab pixels from foreground	
 			float sceneZ = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(distortedGrabUVs)));
