@@ -95,8 +95,12 @@
             CGPROGRAM
             // As we aim for a minimal appdata struct lightmapping (including gi) is not supported, thus: nolightmap
             #pragma surface surf LuxStandardSpecular addshadow fullforwardshadows vertex:LuxTessellationDisplaceMixMapped nolightmap tessellate:LuxTessEdge tessphong:_Phong
-
             #pragma target 4.6
+            
+            #if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+                #pragma multi_compile __ LUX_AREALIGHTS
+            #endif
+
             #include "Tessellation.cginc"
 
             // Enable mix mapping

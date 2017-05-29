@@ -28,10 +28,10 @@ UnityLight MainLight ()
 {
 	UnityLight l;
 
-    l.color = _LightColor0.rgb;
-    l.dir = _WorldSpaceLightPos0.xyz;
-    l.ndotl = 0; // needed to make area lights work
-    return l;
+	l.color = _LightColor0.rgb;
+	l.dir = _WorldSpaceLightPos0.xyz;
+	l.ndotl = 0; // needed to make area lights work
+	return l;
 }
 
 UnityLight AdditiveLight (half3 lightDir, half atten)
@@ -323,17 +323,15 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 		#else
 		//	Using Mask Texture / Only Parallax Mapping needs the Mask, POM samples it itself
 			half mixmap = 0;
-			
 			// Simple PM and the Meta Pass take this route
-			// #if (defined (_PARALLAXMAP) && !defined(EFFECT_BUMP)) || (defined (_PARALLAXMAP) && defined (UNITY_PASS_META))	// Read mixmap and first height in a single lookup
-
 			// New: Only the Meta Pass takes this route – all other passes rely on the Parallax function
 			#if defined (UNITY_PASS_META)
 				half3 heightMixPuddleMask = tex2D (_ParallaxMap, lux.baseUV.xy).gbr;
 				mixmap = heightMixPuddleMask.y;
 				lux.height = heightMixPuddleMask.x;
 				lux.puddleMaskValue = heightMixPuddleMask.z;
-				//#define FIRSTHEIGHT_READ
+				// was commented??
+				#define FIRSTHEIGHT_READ
 			// Route for shader having no height map 
 			#elif !defined (_PARALLAXMAP) && !defined(EFFECT_BUMP)
 				mixmap = UNITY_SAMPLE_TEX2D_SAMPLER (_DetailMask, _MainTex, lux.baseUV.xy).g;
@@ -346,8 +344,8 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 	#if defined (_PARALLAXMAP)
 		#if defined(EFFECT_BUMP) && !defined (UNITY_PASS_META)
 			// Mixmapping
-    		#if defined (GEOM_TYPE_BRANCH_DETAIL)
-            	Lux_SimplePOM_MixMap (lux, _LinearSteps, _ParallaxMap);
+			#if defined (GEOM_TYPE_BRANCH_DETAIL)
+				Lux_SimplePOM_MixMap (lux, _LinearSteps, _ParallaxMap);
 			// Regular blending
 			#else
 				Lux_SimplePOM (lux, _LinearSteps, _ParallaxMap);
@@ -370,15 +368,15 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 	#endif
 
 	#if defined (_WETNESS_SIMPLE) || defined (_WETNESS_RIPPLES) || defined (_WETNESS_FLOW) || defined (_WETNESS_FULL)
-	    // Shall we sample the puddle mask from the heightmap?
-	    // Puddle Mask from heightmap but using custom tiling:
-        #if defined (GEOM_TYPE_MESH)
-            lux.puddleMaskValue = tex2D (_ParallaxMap, lux.extrudedUV.xy * _PuddleMaskTiling).r; 
-        // Puddle Mask from vertex color – else we take the already sampled value
-        #elif !defined(LOD_FADE_CROSSFADE) && defined(_PARALLAXMAP)
-            lux.puddleMaskValue = lux.vertexColor.g;
-        #endif
-    #endif
+		// Shall we sample the puddle mask from the heightmap?
+		// Puddle Mask from heightmap but using custom tiling:
+		#if defined (GEOM_TYPE_MESH)
+			lux.puddleMaskValue = tex2D (_ParallaxMap, lux.extrudedUV.xy * _PuddleMaskTiling).r; 
+		// Puddle Mask from vertex color – else we take the already sampled value
+		#elif !defined(LOD_FADE_CROSSFADE) && defined(_PARALLAXMAP)
+			lux.puddleMaskValue = lux.vertexColor.g;
+		#endif
+	#endif
 
 //	Lux: Calculate water and snow distribution and the final refractedUV
 	#if defined (_WETNESS_SIMPLE) || defined (_WETNESS_RIPPLES) || defined (_WETNESS_FLOW) || defined (_WETNESS_FULL) || defined (_SNOW)
@@ -438,14 +436,14 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 //	Lux: Lighting Features – Translucent Lighting
 	#if defined (LOD_FADE_PERCENTAGE)
 		// Mixmapping
-    	#if defined (GEOM_TYPE_BRANCH_DETAIL)
-    		// Combined maps?
+		#if defined (GEOM_TYPE_BRANCH_DETAIL)
+			// Combined maps?
 			#if defined(GEOM_TYPE_BRANCH)
 				o.translucency = combined.b * _TranslucencyStrength * lux.mixmapValue.x;
 			#else
 				o.translucency = _TranslucencyStrength * lux.mixmapValue.x;
 			#endif
-    	#else
+		#else
 			// Combined maps?
 			#if defined(GEOM_TYPE_BRANCH)
 				o.translucency = combined.b * _TranslucencyStrength;
@@ -468,7 +466,6 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 		);
 	#endif
 
-
 //#if defined (_WETNESS_SIMPLE) || defined (_WETNESS_RIPPLES) || defined (_WETNESS_FLOW) || defined (_WETNESS_FULL) || defined (_SNOW)
 //	o.diffColor = lux.waterAmount.x;
 //#endif
@@ -476,21 +473,16 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 //	Lux: Now we can compute the final worldNormal
 	#if !defined (UNITY_PASS_META)
 		o.normalWorld = Lux_ConvertPerPixelWorldNormal(lux.tangentNormal * facingFlip, lux.tangentToWorld);
-
-////////
-#if defined(_SNOW)
-		UNITY_BRANCH
-		if (_SnowMapping == 1) {
-//			o.normalWorld = lerp(o.normalWorld, lux.snowNormal.xzy, lux.normalBlendFactor);
-
-			half3x3 SnowTangentToWorld = half3x3( half3(1, 0, 0), half3(0, 0, 1), lux.worldNormalFace);
-			lux.snowNormal = mul( lux.snowNormal, SnowTangentToWorld);
-			o.normalWorld = lerp(o.normalWorld, lux.snowNormal.xyz, lux.normalBlendFactor);
-		}
-#endif
-		
-
-		o.eyeVec = NormalizePerPixelNormal(lux.eyeVec);
+	//	World mapped snow
+		#if defined(_SNOW)
+			UNITY_BRANCH
+			if (_SnowMapping == 1) {
+				half3x3 SnowTangentToWorld = half3x3( half3(1, 0, 0), half3(0, 0, 1), lux.worldNormalFace);
+				lux.snowNormal = mul( lux.snowNormal, SnowTangentToWorld);
+				o.normalWorld = lerp(o.normalWorld, lux.snowNormal.xyz, lux.normalBlendFactor);
+			}
+		#endif
+		o.eyeVec = /*NormalizePerPixelNormal(*/lux.eyeVec; //);
 		o.posWorld = lux.worldPos;
 
 	//	Lux: Diffuse Scattering // breaks GI if snow is enabled!! but it is not really needed so we skip it in meta pass
@@ -536,46 +528,44 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 
 inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections)
 {
-    UnityGIInput d;
-    d.light = light;
-    d.worldPos = s.posWorld;
-    d.worldViewDir = -s.eyeVec;
-    d.atten = atten;
-    #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
-        d.ambient = 0;
-        d.lightmapUV = i_ambientOrLightmapUV;
-    #else
-        d.ambient = i_ambientOrLightmapUV.rgb;
-        d.lightmapUV = 0;
-    #endif
+	UnityGIInput d;
+	d.light = light;
+	d.worldPos = s.posWorld;
+	d.worldViewDir = -s.eyeVec;
+	d.atten = atten;
+	#if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
+		d.ambient = 0;
+		d.lightmapUV = i_ambientOrLightmapUV;
+	#else
+		d.ambient = i_ambientOrLightmapUV.rgb;
+		d.lightmapUV = 0;
+	#endif
 
-    d.probeHDR[0] = unity_SpecCube0_HDR;
-    d.probeHDR[1] = unity_SpecCube1_HDR;
-    #if defined(UNITY_SPECCUBE_BLENDING) || defined(UNITY_SPECCUBE_BOX_PROJECTION)
-      d.boxMin[0] = unity_SpecCube0_BoxMin; // .w holds lerp value for blending
-    #endif
-    #ifdef UNITY_SPECCUBE_BOX_PROJECTION
-      d.boxMax[0] = unity_SpecCube0_BoxMax;
-      d.probePosition[0] = unity_SpecCube0_ProbePosition;
-      d.boxMax[1] = unity_SpecCube1_BoxMax;
-      d.boxMin[1] = unity_SpecCube1_BoxMin;
-      d.probePosition[1] = unity_SpecCube1_ProbePosition;
-    #endif
+	d.probeHDR[0] = unity_SpecCube0_HDR;
+	d.probeHDR[1] = unity_SpecCube1_HDR;
+	#if defined(UNITY_SPECCUBE_BLENDING) || defined(UNITY_SPECCUBE_BOX_PROJECTION)
+		d.boxMin[0] = unity_SpecCube0_BoxMin; // .w holds lerp value for blending
+	#endif
+	#ifdef UNITY_SPECCUBE_BOX_PROJECTION
+		d.boxMax[0] = unity_SpecCube0_BoxMax;
+		d.probePosition[0] = unity_SpecCube0_ProbePosition;
+		d.boxMax[1] = unity_SpecCube1_BoxMax;
+		d.boxMin[1] = unity_SpecCube1_BoxMin;
+		d.probePosition[1] = unity_SpecCube1_ProbePosition;
+	#endif
 
-    if(reflections)
-    {
-        Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.oneMinusRoughness, -s.eyeVec, s.normalWorld, s.specColor);
-        // Replace the reflUVW if it has been compute in Vertex shader. Note: the compiler will optimize the calcul in UnityGlossyEnvironmentSetup itself
-        #if UNITY_STANDARD_SIMPLE
-            g.reflUVW = s.reflUVW;
-        #endif
-
-        return UnityGlobalIllumination (d, occlusion, s.normalWorld, g);
-    }
-    else
-    {
-        return UnityGlobalIllumination (d, occlusion, s.normalWorld);
-    }
+	if(reflections)
+	{
+		Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.oneMinusRoughness, -s.eyeVec, s.normalWorld, s.specColor);
+		// Replace the reflUVW if it has been compute in Vertex shader. Note: the compiler will optimize the calcul in UnityGlossyEnvironmentSetup itself
+		#if UNITY_STANDARD_SIMPLE
+			g.reflUVW = s.reflUVW;
+		#endif
+		return UnityGlobalIllumination (d, occlusion, s.normalWorld, g);
+	}
+	else {
+		return UnityGlobalIllumination (d, occlusion, s.normalWorld);
+	}
 }
 
 inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light)
@@ -595,31 +585,30 @@ half4 OutputForward (half4 output, half alphaFromSurface)
 	return output;
 }
 
-inline half4 VertexGIForward(LuxVertexInput v, float3 posWorld, half3 normalWorld)
-{
-    half4 ambientOrLightmapUV = 0;
-    // Static lightmaps
-    #ifdef LIGHTMAP_ON
-        ambientOrLightmapUV.xy = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
-        ambientOrLightmapUV.zw = 0;
-    // Sample light probe for Dynamic objects only (no static or dynamic lightmaps)
-    #elif UNITY_SHOULD_SAMPLE_SH
-        #ifdef VERTEXLIGHT_ON
-            // Approximated illumination from non-important point lights
-            ambientOrLightmapUV.rgb = Shade4PointLights (
-                unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
-                unity_LightColor[0].rgb, unity_LightColor[1].rgb, unity_LightColor[2].rgb, unity_LightColor[3].rgb,
-                unity_4LightAtten0, posWorld, normalWorld);
-        #endif
+inline half4 VertexGIForward(LuxVertexInput v, float3 posWorld, half3 normalWorld) {
+	half4 ambientOrLightmapUV = 0;
+	// Static lightmaps
+	#ifdef LIGHTMAP_ON
+		ambientOrLightmapUV.xy = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+		ambientOrLightmapUV.zw = 0;
+	// Sample light probe for Dynamic objects only (no static or dynamic lightmaps)
+	#elif UNITY_SHOULD_SAMPLE_SH
+		#ifdef VERTEXLIGHT_ON
+			// Approximated illumination from non-important point lights
+			ambientOrLightmapUV.rgb = Shade4PointLights (
+				unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
+				unity_LightColor[0].rgb, unity_LightColor[1].rgb, unity_LightColor[2].rgb, unity_LightColor[3].rgb,
+				unity_4LightAtten0, posWorld, normalWorld);
+		#endif
 
-        ambientOrLightmapUV.rgb = ShadeSHPerVertex (normalWorld, ambientOrLightmapUV.rgb);
-    #endif
+		ambientOrLightmapUV.rgb = ShadeSHPerVertex (normalWorld, ambientOrLightmapUV.rgb);
+	#endif
 
-    #ifdef DYNAMICLIGHTMAP_ON
-        ambientOrLightmapUV.zw = v.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
-    #endif
+	#ifdef DYNAMICLIGHTMAP_ON
+		ambientOrLightmapUV.zw = v.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+	#endif
 
-    return ambientOrLightmapUV;
+	return ambientOrLightmapUV;
 }
 
 // ------------------------------------------------------------------
@@ -643,7 +632,7 @@ struct VertexOutputForwardBase
 	fixed4 color 						: COLOR0;
 
 	UNITY_VERTEX_INPUT_INSTANCE_ID
-    UNITY_VERTEX_OUTPUT_STEREO
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 VertexOutputForwardBase vertForwardBase (LuxVertexInput v)
@@ -652,7 +641,7 @@ VertexOutputForwardBase vertForwardBase (LuxVertexInput v)
 	VertexOutputForwardBase o;
 	UNITY_INITIALIZE_OUTPUT(VertexOutputForwardBase, o);
 	UNITY_TRANSFER_INSTANCE_ID(v, o);
-    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
 	o.pos = UnityObjectToClipPos(v.vertex);
 	float4 posWorld = mul(unity_ObjectToWorld, v.vertex);
@@ -676,7 +665,7 @@ VertexOutputForwardBase vertForwardBase (LuxVertexInput v)
 	#endif
 	
 	// We need this for shadow receving
-    UNITY_TRANSFER_SHADOW(o, v.uv1);
+	UNITY_TRANSFER_SHADOW(o, v.uv1);
 
 	o.ambientOrLightmapUV = VertexGIForward(v, posWorld, normalWorld);
 	
@@ -740,6 +729,7 @@ half4 fragForwardBase (VertexOutputForwardBase i
 
 	UnityLight mainLight = MainLight ();
 //	Lux: We should not get light and shadow attenuation in once because of translucent lighting - but we have to due to baked shadow masks
+	half i_shadow = 1;
 	UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld);
 //	Lux: occlusion and emission are calculated in FRAGMENT_SETUP
 	half occlusion = s.occlusion;
@@ -747,49 +737,44 @@ half4 fragForwardBase (VertexOutputForwardBase i
 	UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
 
 //	Lux 
-	half specularIntensity = (s.specColor.r == 0.0) ? 0.0 : 1.0;
+	half specularIntensity = 1;
 	fixed3 diffuseNormal = s.normalWorld;
 	half3 diffuseLightDir = 0;
-	half ndotlDiffuse = 0;
+	half nl = saturate(dot(s.normalWorld, gi.light.dir));
+	half ndotlDiffuse = nl;
 
 //	Lux Area lights
 	#if defined(LUX_AREALIGHTS)
 		// NOTE: Forward needs other inputs than deferred
 		Lux_AreaLight (gi.light, specularIntensity, diffuseLightDir, ndotlDiffuse, gi.light.dir, _LightColor0.a, _WorldSpaceLightPos0.xyz, s.posWorld, -s.eyeVec, s.normalWorld, diffuseNormal, 1.0 - s.oneMinusRoughness);
+		nl = saturate(dot(s.normalWorld, gi.light.dir));
 	#else
 		diffuseLightDir = gi.light.dir;
-//	Unity > 5.5.
-		#if UNITY_VERSION >= 550
-			ndotlDiffuse = saturate( dot(diffuseNormal, gi.light.dir) );
-		#else
-			ndotlDiffuse = gi.light.ndotl;
-		#endif
 		// If area lights are disabled we still have to reduce specular intensity
 		#if !defined(DIRECTIONAL) && !defined(DIRECTIONAL_COOKIE)
 			specularIntensity = saturate(_LightColor0.a);
 		#endif
 	#endif
+	specularIntensity = (s.specColor.r == 0.0) ? 0.0 : specularIntensity;
 
 	half3 viewDir = -s.eyeVec;
 
-//	Direct lighting uses the Lux BRDF
-
-	half3 halfDir = normalize (gi.light.dir + viewDir);
-	half	nh = BlinnTerm (s.normalWorld, halfDir);
-	half	nv = DotClamped (s.normalWorld, viewDir);
-	half	lv = DotClamped (gi.light.dir, viewDir);
-	half	lh = DotClamped (gi.light.dir, halfDir);
+//	Lux: Direct lighting uses the Lux BRDF
+	half3 halfDir = Unity_SafeNormalize (gi.light.dir + viewDir);
+	half	nh = saturate(dot(s.normalWorld, halfDir));
+	half	nv = abs(dot(s.normalWorld, viewDir));
+	half	lv = saturate(dot(gi.light.dir, viewDir));
+	half	lh = saturate(dot(gi.light.dir, halfDir));
 
 	half4 c = Lux_BRDF1_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, viewDir,
-			// Deferred expects these inputs to be calculates up front, forward does not. So we have to fill the input struct.
-			halfDir, nh, nv, lv, lh,
-			ndotlDiffuse,
-			gi.light, gi.indirect, specularIntensity, 1.0);
-
-//	Lux: Translucent Lighting
-
-
-	half i_shadow = atten;
+		// Deferred expects these inputs to be calculates up front, forward does not. So we have to fill the input struct.
+		halfDir, nh, nv, lv, lh,
+		nl,
+		ndotlDiffuse,
+		gi.light,
+		gi.indirect,
+		specularIntensity,
+		shadow);
 
 	#if defined (LOD_FADE_PERCENTAGE)
 		half3 lightScattering = 0;
@@ -801,14 +786,11 @@ half4 fragForwardBase (VertexOutputForwardBase i
 			half a2 = 0.7 * 0.7;
 			half d = ( VdotL * a2 - VdotL ) * VdotL + 1;
 			half GGX = (a2 / UNITY_PI) / (d * d);
-			
 			#if defined (DIRECTIONAL)
-				lightScattering = wrappedNdotL * GGX * s.translucency * lerp(gi.light.color, _LightColor0.rgb, _Lux_Transluclent_NdotL_Shadowstrength ); // * lerp(shadow, 1, _Lux_Transluclent_NdotL_Shadowstrength);
+				lightScattering = wrappedNdotL * GGX * s.translucency * lerp(gi.light.color, _LightColor0.rgb, _Lux_Translucent_NdotL_Shadowstrength );
 			#else
-				lightScattering = wrappedNdotL * GGX * s.translucency * gi.light.color * lerp(i_shadow, 1, _Lux_Transluclent_NdotL_Shadowstrength );
+				lightScattering = wrappedNdotL * GGX * s.translucency * gi.light.color * lerp(shadow * atten, atten, _Lux_Translucent_NdotL_Shadowstrength);;
 			#endif
-
-			c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
 		}
 		UNITY_BRANCH
 		if (s.scatteringPower > 0.001) {
@@ -816,19 +798,15 @@ half4 fragForwardBase (VertexOutputForwardBase i
 			half3 transLightDir = diffuseLightDir + diffuseNormal * _Lux_Tanslucent_Settings.x;
 			half transDot = dot( -transLightDir, viewDir );
 			transDot = exp2(saturate(transDot) * s.scatteringPower - s.scatteringPower) * s.translucency;
-			half shadowFactor = saturate(transDot) * _Lux_Tanslucent_Settings.z * s.translucency;
-			//half3 lightScattering = transDot * gi.light.color * lerp(shadow, 1, shadowFactor);
-
-			// gi.light.color already contains shadows... so it is not accurate but the best i could find
+			half shadowFactor = /*saturate(transDot) */ _Lux_Tanslucent_Settings.z * s.translucency;
 			#if defined (DIRECTIONAL)
 			//|| defined (DIRECTIONAL_COOKIE)
-				half3 lightScattering = transDot * lerp(gi.light.color, _LightColor0.rgb, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //* _LightColor0.rgb * lerp(s.Shadow, 1, shadowFactor); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+				lightScattering = transDot * lerp(gi.light.color, _LightColor0.rgb, shadowFactor);
 			#else
-				half3 lightScattering = transDot * gi.light.color /*_LightColor0.rgb*/ * lerp(i_shadow, 1, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+				lightScattering = transDot * gi.light.color * lerp(shadow * atten, atten, shadowFactor);
 			#endif
-			c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
 		}
-		
+		c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
 	#endif
 
 	c.rgb += UNITY_BRDF_GI (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, occlusion, gi);
@@ -851,7 +829,7 @@ struct VertexOutputForwardAdd
 		half3 eyeVec 					: TEXCOORD1;
 	#endif
 	half4 tangentToWorldAndLightDir[3]	: TEXCOORD2;	// [3x3:tangentToWorld | 1x3:lightDir]
-	float4 posWorld                     : TEXCOORD5;
+	float4 posWorld					 	: TEXCOORD5;
 	UNITY_SHADOW_COORDS(6)
 
 //	Lux: Simple waste! Fog coords are only a float! So we redefine it using float4	
@@ -963,56 +941,53 @@ half4 fragForwardAdd (VertexOutputForwardAdd i
 	FRAGMENT_SETUP_FWDADD(s)
 
 //	Lux: No shadows from LIGHT_ATTENUATION(i) – we read these separately
-
 	UNITY_LIGHT_ATTENUATION(atten, i, s.posWorld)
 
 	UnityLight light = AdditiveLight (IN_LIGHTDIR_FWDADD(i), atten);
 	UnityIndirect noIndirect = ZeroIndirect ();
 
 //	Lux
-	half specularIntensity = (s.specColor.r == 0.0) ? 0.0 : 1.0;
+	half specularIntensity = 1;
 	fixed3 diffuseNormal = s.normalWorld;
 	half3 diffuseLightDir = 0;
-	half ndotlDiffuse = 0;
+	half nl = saturate(dot(s.normalWorld, light.dir));
+	half ndotlDiffuse = nl;
 
 //	Lux Area lights
 	#if defined(LUX_AREALIGHTS)
 		// NOTE: Forward needs other inputs than deferred
 		Lux_AreaLight (light, specularIntensity, diffuseLightDir, ndotlDiffuse, light.dir, _LightColor0.a, _WorldSpaceLightPos0.xyz, s.posWorld, -s.eyeVec, s.normalWorld, diffuseNormal, 1.0 - s.oneMinusRoughness);
+		nl = saturate(dot(s.normalWorld, light.dir));
 	#else
 		diffuseLightDir = light.dir;
-//	Unity > 5.5.
-		#if UNITY_VERSION >= 550
-			ndotlDiffuse = saturate( dot(diffuseNormal, light.dir) );
-		#else
-			ndotlDiffuse = gi.light.ndotl;
-		#endif
 		// If area lights are disabled we still have to reduce specular intensity
 		#if !defined(DIRECTIONAL) && !defined(DIRECTIONAL_COOKIE)
 			specularIntensity = saturate(_LightColor0.a);
 		#endif
 	#endif
+	specularIntensity = (s.specColor.r == 0.0) ? 0.0 : specularIntensity;
 
 	half3 viewDir = -s.eyeVec;
 
 //	Lux: Direct lighting uses the Lux BRDF
-	half3 halfDir = normalize (light.dir + viewDir);
-	half	nh = BlinnTerm (s.normalWorld, halfDir);
-	half	nv = DotClamped (s.normalWorld, viewDir);
-	half	lv = DotClamped (light.dir, viewDir);
-	half	lh = DotClamped (light.dir, halfDir);
+	half3 halfDir = Unity_SafeNormalize (light.dir + viewDir);
+	half	nh = saturate(dot(s.normalWorld, halfDir));
+	half	nv = abs(dot(s.normalWorld, viewDir));
+	half	lv = saturate(dot(light.dir, viewDir));
+	half	lh = saturate(dot(light.dir, halfDir));
 
 	half4 c = Lux_BRDF1_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, viewDir,
-				// Deferred expects these inputs to be calculates up front, forward does not. So we have to fill the input struct.
-				halfDir, nh, nv, lv, lh,
-				ndotlDiffuse,
-				light, noIndirect, specularIntensity, 1.0);
+		// Deferred expects these inputs to be calculates up front, forward does not. So we have to fill the input struct.
+		halfDir, nh, nv, lv, lh,
+		nl,
+		ndotlDiffuse,
+		light,
+		noIndirect,
+		specularIntensity,
+		shadow);
 
 //	Lux: Translucent Lighting
 	#if defined (LOD_FADE_PERCENTAGE)
-
-		half i_shadow = atten;
-
 		half3 lightScattering = 0;
 		UNITY_BRANCH
 		if (s.scatteringPower < 0.001) {
@@ -1022,8 +997,11 @@ half4 fragForwardAdd (VertexOutputForwardAdd i
 			half a2 = 0.7 * 0.7;
 			half d = ( VdotL * a2 - VdotL ) * VdotL + 1;
 			half GGX = (a2 / UNITY_PI) / (d * d);
-			lightScattering = wrappedNdotL * GGX * s.translucency * light.color; // * lerp(shadow, 1, _Lux_Transluclent_NdotL_Shadowstrength);
-			c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
+			#if defined (DIRECTIONAL)
+				lightScattering = wrappedNdotL * GGX * s.translucency * lerp(light.color, _LightColor0.rgb, _Lux_Translucent_NdotL_Shadowstrength );
+			#else
+				lightScattering = wrappedNdotL * GGX * s.translucency * light.color * lerp(shadow * atten, atten, _Lux_Translucent_NdotL_Shadowstrength);;
+			#endif
 		}
 		UNITY_BRANCH
 		if (s.scatteringPower > 0.001) {
@@ -1031,17 +1009,15 @@ half4 fragForwardAdd (VertexOutputForwardAdd i
 			half3 transLightDir = diffuseLightDir + diffuseNormal * _Lux_Tanslucent_Settings.x;
 			half transDot = dot( -transLightDir, viewDir );
 			transDot = exp2(saturate(transDot) * s.scatteringPower - s.scatteringPower) * s.translucency;
-			half shadowFactor = saturate(transDot) * _Lux_Tanslucent_Settings.z * s.translucency;
-			// lightScattering = transDot * light.color * lerp(shadow, 1, shadowFactor);
-			// gi.light.color already contains shadows... so it is not accurate but the best i could find
+			half shadowFactor = /*saturate(transDot) */ _Lux_Tanslucent_Settings.z * s.translucency;
 			#if defined (DIRECTIONAL)
 			//|| defined (DIRECTIONAL_COOKIE)
-				lightScattering = transDot * lerp(light.color, _LightColor0.rgb, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //* _LightColor0.rgb * lerp(s.Shadow, 1, shadowFactor); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+				lightScattering = transDot * lerp(light.color, _LightColor0.rgb, shadowFactor);
 			#else
-				lightScattering = transDot * light.color /*_LightColor0.rgb*/ * lerp(i_shadow , 1, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+				lightScattering = transDot * light.color * lerp(shadow * atten, atten, shadowFactor);
 			#endif
-			c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
 		}
+		c.rgb += lightScattering * s.diffColor * _Lux_Tanslucent_Settings.w;
 	#endif
 
 	UNITY_APPLY_FOG_COLOR(i.fogCoord, c.rgb, half4(0,0,0,0)); // fog towards black in additive pass
@@ -1146,7 +1122,7 @@ void fragDeferred (
 	out half4 outEmission : SV_Target3			// RT3: emission (rgb), --unused-- (a)
 
 #if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
-    , out half4 outShadowMask : SV_Target4       // RT4: shadowmask (rgba)
+	, out half4 outShadowMask : SV_Target4	   // RT4: shadowmask (rgba)
 #endif
 
 //	Lux: vface
@@ -1194,9 +1170,11 @@ void fragDeferred (
 // http://jp.square-enix.com/tech/library/pdf/Error%20Reduction%20and%20Simplification%20for%20Shading%20Anti-Aliasing.pdf
 
 #if LUX_SPEC_ANITALIASING
+
+	float3 worldNormalFace = i.tangentToWorldAndParallax[2].xyz;
 	float roughness = 1.0 - s.oneMinusRoughness;
-	float3 deltaU = ddx( s.normalWorld );
-	float3 deltaV = ddy( s.normalWorld );
+	float3 deltaU = ddx( worldNormalFace );
+	float3 deltaV = ddy( worldNormalFace );
 	float variance = SCREEN_SPACE_VARIANCE * ( dot ( deltaU , deltaU ) + dot ( deltaV , deltaV ) );
 	float kernelSquaredRoughness = min( 2.0 * variance , SAATHRESHOLD );
 	float squaredRoughness = saturate( roughness * roughness + kernelSquaredRoughness );
@@ -1223,9 +1201,9 @@ void fragDeferred (
 	outEmission = half4(color, 1);
 
 	// Baked direct lighting occlusion if any
-    #if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
-        outShadowMask = UnityGetRawBakedOcclusions(i.ambientOrLightmapUV.xy, IN_WORLDPOS(i));
-    #endif
+	#if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
+		outShadowMask = UnityGetRawBakedOcclusions(i.ambientOrLightmapUV.xy, IN_WORLDPOS(i));
+	#endif
 }
 
 

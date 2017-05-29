@@ -104,6 +104,10 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 		CGPROGRAM
 		#pragma surface surf LuxStandardSpecular fullforwardshadows vertex:vert
 		#pragma target 3.0
+
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
         
         // Distinguish between simple parallax mapping and parallax occlusion mapping
 		#pragma shader_feature _ EFFECT_BUMP
@@ -127,6 +131,7 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 		#include "../Lux Core/Lux Features/LuxParallax.cginc"
 		#include "../Lux Core/Lux Features/LuxDynamicWeather.cginc"
 		#include "../Lux Core/Lux Features/LuxDiffuseScattering.cginc"
+		#include "../Lux Core/Lux Features/LuxSpecularAntiAliasing.cginc"
 
 		struct Input {
 			float2 lux_uv_MainTex;
@@ -217,6 +222,8 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 
 			// Then add diffuse scattering
 			LUX_DIFFUSESCATTERING(o.Albedo, o.Normal, IN.viewDir)
+
+			LUX_SPECULARANITALIASING
 
 		}
 		ENDCG

@@ -1,3 +1,4 @@
+// Lux modified autoLight for translucent shaders
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 #ifndef AUTOLIGHT_INCLUDED
@@ -143,16 +144,20 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
 #   endif
 #endif
 
+// We split light range and angle attenuation --> destName / o.Atten
+// and shadows --> o.Shadow.
+// Directional lights have to be treated separately in order to achieve nice blending though.
+
 // ---------------------------------------------------
 #ifdef POINT
-    sampler2D _LightTexture0;
-    unityShadowCoord4x4 unity_WorldToLight;
-    #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-        unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
-        fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                            fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL; \
-                            o.Shadow = shadow; \
-                            o.worldPosition = worldPos;
+sampler2D _LightTexture0;
+unityShadowCoord4x4 unity_WorldToLight;
+#define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
+    unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
+                    o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL; \
+                    o.Atten = destName; \
+                    o.worldPosition = worldPos;
 
 #endif
 
@@ -171,43 +176,22 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
     }
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
-                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
                     fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz); \
-                            o.Shadow = shadow * destName; \
-                            o.worldPosition = worldPos;
+                    o.Atten = destName; \
+                    o.worldPosition = worldPos;
 #endif
 
 // ---------------------------------------------------
-
-/*
-float4 lmap(IN input) {
-    #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
-       return input.lmap;
-    #else
-        return 0; 
-    #endif  
-}*/
-
+// Fade smoothly between baked and real time directionlal shadows – this needs us to actually write out shadow attenuation to destName :(
+// But we can work against it :)
 #ifdef DIRECTIONAL
-  //#define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos);
-  // Lux
-
-    #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
-
-        #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-                fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                                o.Shadow = destName; \
-                                o.LightmapCoords = input.lmap; \
-                                o.worldPosition = worldPos;
-    #else
-        #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-                fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                                o.Shadow = destName; \
-                                o.LightmapCoords = 0; \
-                                o.worldPosition = worldPos;
-    #endif
+    #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
+                    fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    o.Atten = destName; \
+                    o.Shadow = 1.0; \
+                    o.worldPosition = worldPos; 
 #endif
-// destName = o.Shadow; \ //lerp(o.Shadow, 1, _Lux_Tanslucent_Settings.z); \
 
 // ---------------------------------------------------
 #ifdef POINT_COOKIE
@@ -216,23 +200,26 @@ float4 lmap(IN input) {
     sampler2D _LightTextureB0;
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
-        fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w; \
-                            o.Shadow = shadow; \
-                            o.worldPosition = worldPos;
+                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w; \
+                    o.Shadow = shadow; \
+                    o.Atten = destName; \
+                    o.worldPosition = worldPos;
 #endif
 
 // ---------------------------------------------------
+// Broken?! when using forward rendering (shadows pop in)
+// TODO: cookie is not handled properly
 #ifdef DIRECTIONAL_COOKIE
     sampler2D _LightTexture0;
     unityShadowCoord4x4 unity_WorldToLight;
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-        unityShadowCoord2 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xy; \
-        fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-        fixed destName = tex2D(_LightTexture0, lightCoord).w * shadow; \
-                o.LightmapCoords = 0; \
-                o.Shadow = 0; \
-                o.worldPosition = worldPos;               
+                    unityShadowCoord2 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xy; \
+                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    fixed destName = tex2D(_LightTexture0, lightCoord).w * shadow; \
+                    o.Shadow = 1; \
+                    o.Atten = destName; \
+                    o.worldPosition = worldPos; 
 #endif
 
 // -----------------------------

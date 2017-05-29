@@ -14,11 +14,16 @@ float D_GGXAniso(float TdotH, float BdotH, float mt, float mb, float nh) {
 }
 
 // Ref: https://cedec.cesa.or.jp/2015/session/ENG/14698.html The Rendering Materials of Far Cry 4
-float SmithJointGGXAniso(float TdotV, float BdotV, float NdotV, float TdotL, float BdotL, float NdotL, float roughnessT, float roughnessB) {
+float Lux_SmithJointGGXAniso(float TdotV, float BdotV, float NdotV, float TdotL, float BdotL, float NdotL, float roughnessT, float roughnessB) {
     // Expects roughnessT and roughnessB to be squared.
     float lambdaV = NdotL * sqrt(roughnessT * TdotV * TdotV + roughnessB * BdotV * BdotV + NdotV * NdotV);
     float lambdaL = NdotV * sqrt(roughnessT * TdotL * TdotL + roughnessB * BdotL * BdotL + NdotL * NdotL);
-    return 0.5 / (lambdaV + lambdaL);
+    // As it might error on dx11 using forward lighting:
+    #if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+    	return 0.5 / max(1e-5f, (lambdaV + lambdaL) );
+    #else
+    	return 0.5 / (lambdaV + lambdaL);
+    #endif
 }
 
 
@@ -26,7 +31,11 @@ float SmithJointGGXAniso(float TdotV, float BdotV, float NdotV, float TdotL, flo
 
 	half4 Lux_ANISO_BRDF (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness, half3 normal, half3 viewDir,
 		half3 halfDir, half nh, half nv, half lv, half lh,
-		half3 worldTangentDir, half RoughnessT, half RoughnessB,
+		float3 T,
+		float3 B,
+		half RoughnessT,
+		half RoughnessB,
+		half nl,
 		half nl_diffuse,
 		UnityLight light, UnityIndirect gi, half specularIntensity, half shadow)
 	{
@@ -36,12 +45,6 @@ float SmithJointGGXAniso(float TdotV, float BdotV, float NdotV, float TdotL, flo
 		half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
 		half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
-		#if UNITY_VERSION >= 550
-			half nl = saturate(dot(normal, light.dir));
-		#else
-			half nl = light.ndotl;
-		#endif
-
 		// BRDF expects all other inputs to be calculated up front!
 		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
 			halfDir = Unity_SafeNormalize (light.dir + viewDir);
@@ -50,15 +53,10 @@ float SmithJointGGXAniso(float TdotV, float BdotV, float NdotV, float TdotL, flo
 			lv = saturate(dot(light.dir, viewDir));
 			lh = saturate(dot(light.dir, halfDir));
 		#endif
-
 /*
 RoughnessT = 0.45;
 RoughnessB = 0.45;
 */
-
-		float3 T = worldTangentDir.xyz;
-		float3 B = cross(normal, worldTangentDir);
-
 		float mt = RoughnessT * RoughnessT;
 		float mb = RoughnessB * RoughnessB;
 		float TdotH = dot(T, halfDir );
@@ -69,10 +67,7 @@ RoughnessB = 0.45;
 		float BdotL = dot(B, light.dir);
 
 		half D = D_GGXAniso(TdotH, BdotH, mt, mb, nh);
-		half V = SmithJointGGXAniso( TdotV, BdotV, nv, TdotL, BdotL, nl, mt, mb);
-		
-
-//		Regular stuff (isotropic...)
+		half V = Lux_SmithJointGGXAniso( TdotV, BdotV, nv, TdotL, BdotL, nl, mt, mb);
 
 		// Diffuse term 
 		half3 diffuseTerm = DisneyDiffuse(nv, nl_diffuse, lh, perceptualRoughness) * nl_diffuse;
@@ -92,9 +87,6 @@ RoughnessB = 0.45;
 			half a004 = min( r.x * r.x, exp2( -9.28 * nv ) ) * r.x + r.y;
 			half2 AB = half2( -1.04, 1.04 ) * a004 + r.zw;
 			half3 F_L = specColor * AB.x + AB.y;
-
-			//diffuseTerm = (1.0 - F_L ) * nl_diffuse; // * LUX_INV_PI; (* 1/pi gets too dark)
-
 		#else
 	    	half surfaceReduction;
 			#ifdef UNITY_COLORSPACE_GAMMA
@@ -106,15 +98,13 @@ RoughnessB = 0.45;
 		#endif
 
 		half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm)
-				+ specularTerm * light.color * FresnelTerm (specColor, lh)
-			#if LUX_LAZAROV_ENVIRONMENTAL_BRDF
+					+ specularTerm * light.color * FresnelTerm (specColor, lh)
+				#if LUX_LAZAROV_ENVIRONMENTAL_BRDF
 					+ gi.specular * F_L;
-			#else
-				+ surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
-			#endif
+				#else
+					+ surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
+				#endif
 
 		return half4(color, 1);
 	}
-
-
 #endif // LUX_ANISO_BRDF_INCLUDED

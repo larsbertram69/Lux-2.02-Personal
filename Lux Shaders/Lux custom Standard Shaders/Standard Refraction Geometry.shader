@@ -34,12 +34,15 @@
 		
 		CGPROGRAM
 		#pragma surface surf LuxStandardSpecular fullforwardshadows vertex:vert
-
 		#pragma target 3.0
+
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
+
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"
 		#include "../Lux Core/Lux Setup/LuxStructs.cginc"
-		#pragma multi_compile __ LUX_AREALIGHTS
-
+		
 		struct Input {
 			float2 lux_uv_MainTex;			// Important: we must not use standard uv_MainTex as we need access to _MainTex_ST
 			float4 grabUV;

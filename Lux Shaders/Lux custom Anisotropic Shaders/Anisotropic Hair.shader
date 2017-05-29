@@ -50,8 +50,9 @@
 		CGPROGRAM
 		// We have to use "addshadow" due to vface
 		#pragma surface surf LuxAnisoMetallic fullforwardshadows addshadow vertex:vert
-		// exclude_path:forward
-		#pragma multi_compile __ LUX_AREALIGHTS
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
 		#pragma shader_feature _SPECGLOSSMAP
 		#pragma shader_feature _METALLICGLOSSMAP
 

@@ -1,10 +1,3 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-// Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
-// Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
-// Upgrade NOTE: replaced '_LightMatrix0' with 'unity_WorldToLight'
-// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
-
 #ifndef LUX_PRO_DEFERRED_LIBRARY_INCLUDED
 #define LUX_PRO_DEFERRED_LIBRARY_INCLUDED
 
@@ -221,11 +214,13 @@ void LuxDeferredCalculateLightParams (
 	outAtten = atten;
 	outFadeDist = fadeDist;
 	//	Lux: Smoothly fade out point light shadows
-	#if defined (POINT) || defined (POINT_COOKIE)
-		outShadow = lerp(shadow, 1.0, (1.0 - saturate( (_Lux_ShadowDistance - vpos.z ) * 0.0375 ) ) );
-	#else
+	//	Deprecated: Not needed anymore
+//	#if defined (POINT) || defined (POINT_COOKIE)
+		//outShadow = lerp(shadow, 1.0, (1.0 - saturate( (_Lux_ShadowDistance - vpos.z ) * 0.0375 ) ) );
+//		outShadow = lerp(shadow, 1.0, (1.0 - saturate( (_Lux_ShadowDistance - vpos.z ) * 0.075 ) ) );
+//	#else
 		outShadow = shadow;	
-	#endif
+//	#endif
 	//	Lux: Currently not used
 	outTransfade = 1; //saturate( (_Lux_ShadowDistance - vpos.z ) * 0.0375 ); // Fades out translucent lighting
 }

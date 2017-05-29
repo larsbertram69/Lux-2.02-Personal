@@ -160,7 +160,6 @@ void Lux_AreaLight (
 			#endif
 
 			light.dir = areaLight.specLightDir; 
-			light.ndotl = 0; //LambertTerm (normal, light.dir);
 			specularIntensity *= areaLight.energy;
 			diffuseLightDir = areaLight.diffLightDir;
 			ndotlDiffuse = LambertTerm (diffuseNormal, areaLight.diffLightDir);	

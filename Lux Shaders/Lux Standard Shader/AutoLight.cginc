@@ -141,39 +141,46 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
 #   endif
 #endif
 
+// ---------------------------------------------------
 #ifdef POINT
 sampler2D _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;
 #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
     unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-    fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * shadow;
+        fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL;
+
 #endif
 
+// ---------------------------------------------------
 #ifdef SPOT
-sampler2D _LightTexture0;
-unityShadowCoord4x4 unity_WorldToLight;
-sampler2D _LightTextureB0;
-inline fixed UnitySpotCookie(unityShadowCoord4 LightCoord)
-{
-    return tex2D(_LightTexture0, LightCoord.xy / LightCoord.w + 0.5).w;
-}
-inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
-{
-    return tex2D(_LightTextureB0, dot(LightCoord, LightCoord).xx).UNITY_ATTEN_CHANNEL;
-}
-#define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-    unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
-    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-    fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz) * shadow;
+    sampler2D _LightTexture0;
+    unityShadowCoord4x4 unity_WorldToLight;
+    sampler2D _LightTextureB0;
+    inline fixed UnitySpotCookie(unityShadowCoord4 LightCoord)
+    {
+        return tex2D(_LightTexture0, LightCoord.xy / LightCoord.w + 0.5).w;
+    }
+    inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
+    {
+        return tex2D(_LightTextureB0, dot(LightCoord, LightCoord).xx).UNITY_ATTEN_CHANNEL;
+    }
+    #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
+        unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
+                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+                    fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz);
 #endif
 
+// ---------------------------------------------------
+// Fade smoothly between baked and real time directionlal shadows – this needs us to actually write out shadow attenuation :(
+// But we can work against it :)
 #ifdef DIRECTIONAL
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-        fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos);
+        fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+        fixed shadow = 1.0;
 #endif
-// s.Shadow = destName;
 
+// ---------------------------------------------------
 #ifdef POINT_COOKIE
 samplerCUBE _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;
@@ -184,6 +191,7 @@ sampler2D _LightTextureB0;
     fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w * shadow;
 #endif
 
+// ---------------------------------------------------
 #ifdef DIRECTIONAL_COOKIE
 sampler2D _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;

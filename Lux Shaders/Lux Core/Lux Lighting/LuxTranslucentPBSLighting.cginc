@@ -72,24 +72,6 @@ inline half3 BRDF_Unity_Indirect (half3 baseColor, half3 specColor, half oneMinu
 
 //-------------------------------------------------------------------------------------
 
-// little helpers for GI calculation
-
-#define UNITY_GLOSSY_ENV_FROM_SURFACE(x, s, data)				\
-	Unity_GlossyEnvironmentData g;								\
-	g.roughness		= 1 - s.Smoothness;							\
-	g.reflUVW		= reflect(-data.worldViewDir, s.Normal);	\
-
-
-#if defined(UNITY_PASS_DEFERRED) && UNITY_ENABLE_REFLECTION_BUFFERS
-	#define UNITY_GI(x, s, data) x = UnityGlobalIllumination (data, s.Occlusion, s.Normal);
-#else
-	#define UNITY_GI(x, s, data) 								\
-		UNITY_GLOSSY_ENV_FROM_SURFACE(g, s, data);				\
-		x = UnityGlobalIllumination (data, s.Occlusion, s.Normal, g);
-#endif
-
-//-------------------------------------------------------------------------------------
-
 // Surface shader output structure to be used with physically
 // based shading model.
 
@@ -110,17 +92,17 @@ struct SurfaceOutputLuxTranslucentSpecular
 	half ScatteringPower;
 	float3 worldPosition;	// as it is needed by area lights
 	half Shadow;
+	fixed Atten;
 
 	fixed4 SnowWorldNormal; // xyz = normal, w = blend factor
-
 	float4 LightmapCoords;
 };
 
 half4 _Lux_Tanslucent_Settings; // x: bump distortion, y: power, z: 1.0 - shadow Strength, w: Scale
-half _Lux_Transluclent_NdotL_Shadowstrength;
+half _Lux_Translucent_NdotL_Shadowstrength;
 
 #if !defined(LUX_STANDARD_CORE_INCLUDED)
-	half _TranslucenyStrength;
+	half _TranslucencyStrength;
 	half _ScatteringPower;
 #endif
 
@@ -129,7 +111,6 @@ half _Lux_Transluclent_NdotL_Shadowstrength;
 inline half4 LightingLuxTranslucentSpecular (SurfaceOutputLuxTranslucentSpecular s, half3 viewDir, UnityGI gi)
 {
 	s.Normal = normalize(s.Normal);
-
 	// energy conservation
 	half oneMinusReflectivity;
 	s.Albedo = EnergyConservationBetweenDiffuseAndSpecular (s.Albedo, s.Specular, /*out*/ oneMinusReflectivity);
@@ -142,29 +123,26 @@ inline half4 LightingLuxTranslucentSpecular (SurfaceOutputLuxTranslucentSpecular
 //	///////////////////////////////////////	
 //	Lux 
 //	Lambert Lighting
-	half specularIntensity = (s.Specular.r == 0.0) ? 0.0 : 1.0;
+	half specularIntensity = 1.0;
 	fixed3 diffuseNormal = s.Normal;
 	half3 diffuseLightDir = 0;
-	half ndotlDiffuse = 0;
+	half nl = saturate(dot(s.Normal, gi.light.dir));
+	half ndotlDiffuse = nl;
 
 //	///////////////////////////////////////	
 //	Lux Area lights
 	#if defined(LUX_AREALIGHTS) && !defined(GEOM_TYPE_FROND)
 		// NOTE: Forward needs other inputs than deferred
 		Lux_AreaLight(gi.light, specularIntensity, diffuseLightDir, ndotlDiffuse, gi.light.dir, _LightColor0.a, _WorldSpaceLightPos0.xyz, s.worldPosition, viewDir, s.Normal, diffuseNormal, 1.0 - s.Smoothness);
+		nl = saturate(dot(s.Normal, gi.light.dir));
 	#else
 		diffuseLightDir = gi.light.dir;
-//	Unity > 5.5.
-		#if UNITY_VERSION >= 550
-			ndotlDiffuse = saturate( dot(diffuseNormal, gi.light.dir) );
-		#else
-			ndotlDiffuse = gi.light.ndotl;
-		#endif
 		// If area lights are disabled we still have to reduce specular intensity
 		#if !defined(DIRECTIONAL) && !defined(DIRECTIONAL_COOKIE)
 			specularIntensity = saturate(_LightColor0.a);
 		#endif
 	#endif
+	specularIntensity = (s.Specular.r == 0.0) ? 0.0 : specularIntensity;
 
 //	Shadow atten
 //	
@@ -179,13 +157,12 @@ inline half4 LightingLuxTranslucentSpecular (SurfaceOutputLuxTranslucentSpecular
 /*	s.Shadow = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
 */
 
-//s.Shadow = 1;
-
 //	///////////////////////////////////////	
 //	Real time lighting uses the Lux BRDF
 	half4 c = Lux_BRDF1_PBS (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir,
 				// Deferred expects these inputs to be calculates up front, forward does not. So we simply fill the input struct with zeros.
 				half3(0, 0, 0), 0, 0, 0, 0,
+				nl,
 				ndotlDiffuse,
 				gi.light, gi.indirect, specularIntensity, s.Shadow);
 
@@ -202,7 +179,8 @@ inline half4 LightingLuxTranslucentSpecular (SurfaceOutputLuxTranslucentSpecular
 		half a2 = 0.7 * 0.7;
 		half d = ( VdotL * a2 - VdotL ) * VdotL + 1;
 		half GGX = (a2 / UNITY_PI) / (d * d);
-		lightScattering = wrappedNdotL * GGX * s.Translucency * gi.light.color; // * lerp(s.Shadow, 1, _Lux_Transluclent_NdotL_Shadowstrength) ;
+		lightScattering = wrappedNdotL * GGX * s.Translucency * gi.light.color * lerp(s.Shadow * s.Atten, s.Atten, _Lux_Translucent_NdotL_Shadowstrength);
+		c.rgb += lightScattering * s.Albedo * _Lux_Tanslucent_Settings.w;
 	}
 	UNITY_BRANCH
 	if (s.ScatteringPower > 0.001) {
@@ -210,17 +188,16 @@ inline half4 LightingLuxTranslucentSpecular (SurfaceOutputLuxTranslucentSpecular
 		half3 transLightDir = diffuseLightDir + diffuseNormal * _Lux_Tanslucent_Settings.x;
 		half transDot = dot( -transLightDir, viewDir );
 		transDot = exp2(saturate(transDot) * s.ScatteringPower - s.ScatteringPower) * s.Translucency;
-		half shadowFactor = saturate(transDot) * _Lux_Tanslucent_Settings.z * s.Translucency;
-// gi.light.color already contains shadows... so it is not accurate but the best i could find
+		half shadowFactor = /*saturate(transDot) */ _Lux_Tanslucent_Settings.z * s.Translucency;
 		#if defined (DIRECTIONAL)
-		//|| defined (DIRECTIONAL_COOKIE)
-			lightScattering = transDot * lerp(gi.light.color, _LightColor0.rgb, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //* _LightColor0.rgb * lerp(s.Shadow, 1, shadowFactor); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+			lightScattering = transDot * lerp(gi.light.color, _LightColor0.rgb, shadowFactor);
+		#elif defined (DIRECTIONAL_COOKIE)
+			lightScattering = 0;
 		#else
-			lightScattering = transDot * gi.light.color /*_LightColor0.rgb*/ * lerp(s.Shadow, 1, saturate(shadowFactor * _Lux_Tanslucent_Settings.w) ); //gi.light.color; // * lerp(s.Shadow, 1, shadowFactor);
+			lightScattering = transDot * gi.light.color * lerp(s.Shadow * s.Atten, s.Atten, shadowFactor);
 		#endif
+		c.rgb += lightScattering * s.Albedo * _Lux_Tanslucent_Settings.w;
 	}
-
-	c.rgb += lightScattering * s.Albedo * _Lux_Tanslucent_Settings.w;
 
 
 //	Baked Lighting uses Unity's built in BRDF	
@@ -239,7 +216,12 @@ inline void LightingLuxTranslucentSpecular_GI (
 	//#if defined(_Snow)  <-- does not get compiled out?
 		s.Normal = lerp(s.Normal, s.SnowWorldNormal.xyz, s.SnowWorldNormal.w);
 	//#endif
-	UNITY_GI(gi, s, data);
+#if defined(UNITY_PASS_DEFERRED) && UNITY_ENABLE_REFLECTION_BUFFERS
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal);
+#else
+    Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal, s.Specular);
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
+#endif
 }
 
 #endif

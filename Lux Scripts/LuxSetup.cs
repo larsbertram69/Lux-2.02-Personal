@@ -93,7 +93,7 @@ public class LuxSetup : MonoBehaviour {
         Shader.SetGlobalVector("_Lux_Skin_DistanceRange", new Vector2(SkinLightingDistance, SkinLightingFadeRange));
     //  Translucent Lighting
         Shader.SetGlobalVector("_Lux_Tanslucent_Settings", new Vector4(BumpDistortion_T, 0.0f, 1.0f - ShadowStrength_T, Scale_T));
-        Shader.SetGlobalFloat("_Lux_Transluclent_NdotL_Shadowstrength", 1.0f - ShadowStrength_NdotL);
+        Shader.SetGlobalFloat("_Lux_Translucent_NdotL_Shadowstrength", 1.0f - ShadowStrength_NdotL);
     //  Anisotropic Lighting
         Shader.SetGlobalVector("_Lux_Anisotropic_Settings", new Vector4(BumpDistortion_A, Power_A, 1.0f - ShadowStrength_A, Scale_A));  
     }

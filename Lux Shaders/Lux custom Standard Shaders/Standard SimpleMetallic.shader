@@ -12,17 +12,23 @@
 		CGPROGRAM
 		#pragma surface surf LuxStandardSpecular vertex:vert fullforwardshadows
 		#pragma target 3.0
-		#pragma multi_compile _ LUX_AREALIGHTS
+		
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
 
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"
 		#include "../Lux Core/Lux Setup/LuxStructs.cginc"
 		#include "../Lux Core/Lux Utils/LuxUtils.cginc"
+		#include "../Lux Core/Lux Features/LuxSpecularAntiAliasing.cginc"
 
 		sampler2D _MainTex;
 
 		struct Input {
 			float2 lux_uv_MainTex;			// Important: we must not use standard uv_MainTex as we need access to _MainTex_ST
+			float3 worldNormal;
+			INTERNAL_DATA 					// Needed by "LUX_SPECULARANITALIASING" 
 		};
 
 		half _Glossiness;
@@ -44,9 +50,13 @@
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
 
+			o.Normal = half3(0,0,1); // We have to write to o.Normal
+
 			// As Lux uses the specular worklflow we have to convert from metallic to specular.
 			// Do this before calling any further Lux macros which write to the final specular output structure.
 			LUX_METALLIC_TO_SPECULAR
+
+			LUX_SPECULARANITALIASING 
 		}
 		ENDCG
 	}

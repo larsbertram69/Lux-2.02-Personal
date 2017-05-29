@@ -11,7 +11,7 @@
 		[Header(Translucent Lighting ______________________________________________________ )]
 		[Space(4)]
 		[NoScaleOffset] _TranslucencyOcclusion ("Lokal Thickness (B) Occlusion (G)", 2D) = "white" {}
-		_TranslucenyStrength ("Translucency Strength", Range(0,1)) = 1
+		_TranslucencyStrength ("Translucency Strength", Range(0,1)) = 1
 		_ScatteringPower ("Scattering Power", Range(0,8)) = 4
 
 	}
@@ -60,7 +60,7 @@
 			half4 transOcclusion = tex2D(_TranslucencyOcclusion, IN.uv_MainTex);
 			o.Occlusion = transOcclusion.g;
 		//	Lux: Write translucent lighting parameters to the output struct 
-			o.Translucency = transOcclusion.b * _TranslucenyStrength;
+			o.Translucency = transOcclusion.b * _TranslucencyStrength;
 			o.ScatteringPower = _ScatteringPower;
 		}
 		ENDCG

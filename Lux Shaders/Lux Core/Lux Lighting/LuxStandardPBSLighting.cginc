@@ -66,24 +66,6 @@ inline half3 BRDF_Unity_Indirect (half3 baseColor, half3 specColor, half oneMinu
 
 //-------------------------------------------------------------------------------------
 
-// little helpers for GI calculation
-
-#define UNITY_GLOSSY_ENV_FROM_SURFACE(x, s, data)				\
-	Unity_GlossyEnvironmentData g;								\
-	g.roughness		= 1 - s.Smoothness;							\
-	g.reflUVW		= reflect(-data.worldViewDir, s.Normal);	\
-
-
-#if defined(UNITY_PASS_DEFERRED) && UNITY_ENABLE_REFLECTION_BUFFERS
-	#define UNITY_GI(x, s, data) x = UnityGlobalIllumination (data, s.Occlusion, s.Normal);
-#else
-	#define UNITY_GI(x, s, data) 								\
-		UNITY_GLOSSY_ENV_FROM_SURFACE(g, s, data);				\
-		x = UnityGlobalIllumination (data, s.Occlusion, s.Normal, g);
-#endif
-
-//-------------------------------------------------------------------------------------
-
 // Surface shader output structure to be used with physically
 // based shading model.
 
@@ -104,6 +86,7 @@ struct SurfaceOutputLuxStandardSpecular
 
 	fixed Shadow;
 	float3 worldPosition;	// as it is needed by area lights
+	fixed3 worldNormalFace;
 	fixed4 SnowWorldNormal; // xyz = normal, w = blend factor
 };
 
@@ -118,54 +101,42 @@ inline half4 LightingLuxStandardSpecular (SurfaceOutputLuxStandardSpecular s, ha
 	// this is necessary to handle transparency in physically correct way - only diffuse component gets affected by alpha
 	half outputAlpha;
 	s.Albedo = PreMultiplyAlpha (s.Albedo, s.Alpha, oneMinusReflectivity, /*out*/ outputAlpha);
-//	half4 c = UNITY_BRDF_PBS (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, gi.light, gi.indirect);
 
 //	///////////////////////////////////////	
 //	Lux 
 //	Lambert Lighting
-	half specularIntensity = (s.Specular.r == 0.0) ? 0.0 : 1.0;
-//	Set up the blurred normal for diffuse lighting
+	half specularIntensity = 1.0;
 	fixed3 diffuseNormal = s.Normal;
 	half3 diffuseLightDir = 0;
-	half ndotlDiffuse = 0;
+	half nl = saturate(dot(s.Normal, gi.light.dir));
+	half ndotlDiffuse = nl;
 
 //	///////////////////////////////////////	
 //	Lux Area lights
 	#if defined(LUX_AREALIGHTS)
 		// NOTE: Forward needs other inputs than deferred
 		Lux_AreaLight(gi.light, specularIntensity, diffuseLightDir, ndotlDiffuse, gi.light.dir, _LightColor0.a, _WorldSpaceLightPos0.xyz, s.worldPosition, viewDir, s.Normal, diffuseNormal, 1.0 - s.Smoothness);
+		nl = saturate(dot(s.Normal, gi.light.dir));
 	#else
 		diffuseLightDir = gi.light.dir;
-//	Unity > 5.5.
-		#if UNITY_VERSION >= 550
-			ndotlDiffuse = saturate( dot(diffuseNormal, gi.light.dir) );
-		#else
-			ndotlDiffuse = gi.light.ndotl;
-		#endif
 		// If area lights are disabled we still have to reduce specular intensity
 		#if !defined(DIRECTIONAL) && !defined(DIRECTIONAL_COOKIE)
 			specularIntensity = saturate(_LightColor0.a);
 		#endif
 	#endif
-	//	///////////////////////////////////////	
+	specularIntensity = (s.Specular.r == 0.0) ? 0.0 : specularIntensity;
 
 //	///////////////////////////////////////	
 //	Real time lighting uses the Lux BRDF
-
-
 //	Using regular attenuation as written by autolight.cginc and this works...
-	//#if defined(DIRECTIONAL)
-		s.Shadow = 1;
-	//#endif
-
+	s.Shadow = 1;
 
 	half4 c = Lux_BRDF1_PBS(s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir,
-		// Deferred expects these inputs to be calculates up front, forward does not. So we simply fill the input struct with zeros.
+		// Deferred expects these inputs to be calculates up front, custom forward does not. So we simply fill the input struct with zeros.
 		half3(0, 0, 0), 0, 0, 0, 0,
+		nl,
 		ndotlDiffuse,
 		gi.light, gi.indirect, specularIntensity, s.Shadow);
-
-
 
 	c.rgb += UNITY_BRDF_GI (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, s.Occlusion, gi);
 	c.a = outputAlpha;
@@ -182,16 +153,6 @@ inline half4 LightingLuxStandardSpecular_Deferred (SurfaceOutputLuxStandardSpecu
 	half4 c = UNITY_BRDF_PBS (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, gi.light, gi.indirect);
 	c.rgb += UNITY_BRDF_GI (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, s.Occlusion, gi);
 
-#if LUX_SPEC_ANITALIASING
-	float roughness = 1.0 - s.Smoothness;
-	float3 deltaU = ddx( s.Normal );
-	float3 deltaV = ddy( s.Normal );
-	float variance = SCREEN_SPACE_VARIANCE * ( dot ( deltaU , deltaU ) + dot ( deltaV , deltaV ) );
-	float kernelSquaredRoughness = min( 2.0 * variance , SAATHRESHOLD );
-	float squaredRoughness = saturate( roughness * roughness + kernelSquaredRoughness );
-	s.Smoothness = 1.0 - sqrt(squaredRoughness);
-#endif
-
 	outDiffuseOcclusion = half4(s.Albedo, s.Occlusion);
 	outSpecSmoothness = half4(s.Specular, s.Smoothness);
 	outNormal = half4(s.Normal * 0.5 + 0.5, 1);
@@ -200,7 +161,7 @@ inline half4 LightingLuxStandardSpecular_Deferred (SurfaceOutputLuxStandardSpecu
 }
 
 inline void LightingLuxStandardSpecular_GI (
-	// using inout here because we might have to combine 2 worldnormals here
+	// using inout here because we might have to combine 2 worldnormals
 	inout SurfaceOutputLuxStandardSpecular s,
 	UnityGIInput data,
 	inout UnityGI gi)
@@ -208,7 +169,12 @@ inline void LightingLuxStandardSpecular_GI (
 	//#if defined(_Snow)  <-- does not get compiled out?
 		s.Normal = lerp(s.Normal, s.SnowWorldNormal.xyz, s.SnowWorldNormal.w);
 	//#endif
-	UNITY_GI(gi, s, data);
+#if defined(UNITY_PASS_DEFERRED) && UNITY_ENABLE_REFLECTION_BUFFERS
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal);
+#else
+    Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal, s.Specular);
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
+#endif
 }
 
 

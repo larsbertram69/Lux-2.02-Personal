@@ -38,7 +38,7 @@ Shader "Lux Standard (Metallic setup)"
 		_UVRatio ("UV Ratio", Vector) = (1,1,0,0)
 		_ParallaxTiling ("Parallax Tiling", Float) = 1
 		[Toggle(EFFECT_BUMP)] _UsePOM("Use POM", Float) = 0.0
-		_LinearSteps("Linear Steps", Range(4, 40.0)) = 20
+		_LinearSteps("Linear Steps", Range(4, 64.0)) = 20
 
 		_OcclusionStrength("Strength", Range(0.0, 1.0)) = 1.0
 		_OcclusionMap("Occlusion", 2D) = "white" {}
@@ -148,7 +148,9 @@ Shader "Lux Standard (Metallic setup)"
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
 
-						// Lux uses spped tree's shader keywords
+			#pragma shader_feature _OCCLUSIONMAP
+
+			// Lux uses spped tree's shader keywords
 			// Do we use Mix Mapping?
 			#pragma shader_feature _ GEOM_TYPE_BRANCH_DETAIL
 			// Which mixmapping mode?
@@ -212,6 +214,8 @@ Shader "Lux Standard (Metallic setup)"
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
+
+			#pragma shader_feature _OCCLUSIONMAP
 
 			// Lux uses spped tree's shader keywords
 			// Do we use Mix Mapping?
@@ -318,6 +322,8 @@ Shader "Lux Standard (Metallic setup)"
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
 
+			#pragma shader_feature _OCCLUSIONMAP
+
 			// Lux uses speed tree's shader keywords
 			// Use Mix Mapping?
 			#pragma shader_feature _ GEOM_TYPE_BRANCH_DETAIL
@@ -340,10 +346,14 @@ Shader "Lux Standard (Metallic setup)"
 			// Snow
 			#pragma shader_feature _ _SNOW
 
-			#pragma multi_compile ___ UNITY_HDR_ON
-			#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
-			#pragma multi_compile DIRLIGHTMAP_OFF DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
-			#pragma multi_compile DYNAMICLIGHTMAP_OFF DYNAMICLIGHTMAP_ON
+			#if UNITY_VERSION < 560
+				#pragma multi_compile ___ UNITY_HDR_ON
+				#pragma multi_compile ___ LIGHTMAP_ON
+				#pragma multi_compile ___ DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE
+				#pragma multi_compile ___ DYNAMICLIGHTMAP_ON
+			#else
+				#pragma multi_compile_prepassfinal
+			#endif
 			
 			#pragma vertex vertDeferred
 			#pragma fragment fragDeferred
@@ -355,7 +365,7 @@ Shader "Lux Standard (Metallic setup)"
 			ENDCG
 		}
 
-				// ------------------------------------------------------------------
+		// ------------------------------------------------------------------
 		// Extracts information for lightmapping, GI (emission, albedo, ...)
 		// This pass it not used during regular rendering.
 		Pass

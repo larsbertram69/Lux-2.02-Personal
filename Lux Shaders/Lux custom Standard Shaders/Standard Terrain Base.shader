@@ -52,7 +52,9 @@ Shader "Hidden/TerrainEngine/Splatmap/Lux-Standard-Base" {
 		CGPROGRAM
 		#pragma surface surf LuxStandardSpecular fullforwardshadows vertex:vert
 		#pragma target 3.0
-		#pragma multi_compile __ LUX_AREALIGHTS
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
 		// needs more than 8 texcoords
 		#pragma exclude_renderers gles
 

@@ -58,7 +58,9 @@ Shader "Lux/Standard Lighting/Nature/Terrain/Standard" {
 		CGPROGRAM
 		#pragma surface surf LuxStandardSpecular vertex:SplatmapVert finalcolor:SplatmapFinalColor finalgbuffer:SplatmapFinalGBuffer fullforwardshadows
 		#pragma multi_compile_fog
-		#pragma multi_compile __ LUX_AREALIGHTS
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
 		#pragma target 3.0
 		// needs more than 8 texcoords
 		#pragma exclude_renderers gles

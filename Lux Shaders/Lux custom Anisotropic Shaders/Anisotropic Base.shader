@@ -30,7 +30,9 @@
 		
 		CGPROGRAM
 		#pragma surface surf LuxAnisoMetallic fullforwardshadows vertex:vert 
-		#pragma multi_compile __ LUX_AREALIGHTS
+		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+			#pragma multi_compile __ LUX_AREALIGHTS
+		#endif
 		#pragma shader_feature _METALLICGLOSSMAP
 
 		#include "../Lux Core/Lux Config.cginc"

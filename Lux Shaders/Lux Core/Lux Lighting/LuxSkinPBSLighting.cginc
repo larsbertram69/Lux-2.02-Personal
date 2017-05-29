@@ -130,25 +130,22 @@ inline half4 LightingLuxSkinSpecular (SurfaceOutputLuxSkinSpecular s, half3 view
 	// Set up the blurred normal for diffuse lighting
 	fixed3 diffuseNormal = s.BlurredNormal;
 	half3 diffuseLightDir = 0;
-	half ndotlDiffuse = 0;
+	half nl = saturate(dot(s.Normal, gi.light.dir));
+	half ndotlDiffuse = nl;
 
 //	///////////////////////////////////////	
 //	Lux Area lights
 	#if defined(LUX_AREALIGHTS)
 		Lux_AreaLight(gi.light, specularIntensity, diffuseLightDir, ndotlDiffuse, gi.light.dir, _LightColor0.a, _WorldSpaceLightPos0.xyz, s.worldPosition, viewDir, s.Normal, diffuseNormal, 1.0 - s.Smoothness);
+		nl = saturate(dot(s.Normal, gi.light.dir));
 	#else
-		diffuseLightDir = gi.light.dir;
-//	Unity > 5.5.
-		#if UNITY_VERSION >= 550
-			ndotlDiffuse = saturate( dot(s.BlurredNormal, gi.light.dir) );
-		#else
-			ndotlDiffuse = gi.light.ndotl;
-		#endif		
+		diffuseLightDir = gi.light.dir;	
 		// If area lights are disabled we still have to reduce specular intensity
 		#if !defined(DIRECTIONAL) && !defined(DIRECTIONAL_COOKIE)
 			specularIntensity = saturate(_LightColor0.a);
 		#endif
 	#endif
+	specularIntensity = (s.Specular.r == 0.0) ? 0.0 : specularIntensity;
 	//	///////////////////////////////////////	
 
 
@@ -158,6 +155,7 @@ inline half4 LightingLuxSkinSpecular (SurfaceOutputLuxSkinSpecular s, half3 view
 		// Deferred expects these inputs to be calculates up front, forward does not. So we simply fill the input struct with zeros.
 		half3(0,0,0), 0, 0, 0, 0,
 		diffuseLightDir,
+		nl,
 		ndotlDiffuse,
 		s.Curvature,
 		gi.light, gi.indirect, specularIntensity, s.Shadow, s.worldPosition);
@@ -174,7 +172,12 @@ inline void LightingLuxSkinSpecular_GI (
 	UnityGIInput data,
 	inout UnityGI gi)
 {
-	UNITY_GI(gi, s, data);
+#if defined(UNITY_PASS_DEFERRED) && UNITY_ENABLE_REFLECTION_BUFFERS
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal);
+#else
+    Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal, s.Specular);
+    gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
+#endif
 }
 
 #endif // LUX_SKIN_PBS_LIGHTING_INCLUDED

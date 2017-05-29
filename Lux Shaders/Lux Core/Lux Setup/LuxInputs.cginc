@@ -62,12 +62,7 @@ struct LuxVertexInput
 #if defined(DYNAMICLIGHTMAP_ON) || defined(UNITY_PASS_META)
     float2 uv2      : TEXCOORD2;
 #endif
-
-
-        ///// UV ratio!?????? geht auch in v.color, oder????
     float2 uv3      : TEXCOORD3;
-
-
 #ifdef _TANGENT_TO_WORLD
     half4 tangent   : TANGENT;
 #endif
@@ -117,7 +112,7 @@ half _DiffuseScatteringContraction;
 //  Translucent Lighting
 #if defined (LOD_FADE_PERCENTAGE)
     half4 _Lux_Tanslucent_Settings;
-    half _Lux_Transluclent_NdotL_Shadowstrength;
+    half _Lux_Translucent_NdotL_Shadowstrength;
     half _TranslucencyStrength;
     half _ScatteringPower;
 #endif

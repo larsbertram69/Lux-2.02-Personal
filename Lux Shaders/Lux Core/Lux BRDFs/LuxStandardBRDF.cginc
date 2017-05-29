@@ -1,7 +1,3 @@
-
-// Lux BRDF for Unity >= 5.5.
-
-
 #ifndef LUX_STANDARD_BRDF_INCLUDED
 #define LUX_STANDARD_BRDF_INCLUDED
 
@@ -9,27 +5,25 @@
 #include "UnityStandardConfig.cginc"
 #include "UnityLightingCommon.cginc"
 
-//-------------------------------------------------------------------------------------
-// Standard BRDF for Unity > 5.3
+//	-------------------------------------------------------------------------------------
+//	Standard BRDF for Unity > 5.3
 
 	half4 Lux_BRDF1_PBS (half3 diffColor, half3 specColor, half oneMinusReflectivity, half smoothness,
 		half3 normal, half3 viewDir,
 		// Lux
-		half3 halfDir, half nh, half nv, half lv, half lh, half nl_diffuse,
+		half3 halfDir, half nh, half nv, half lv, half lh,
+		half nl,
+		half nl_diffuse,
 		UnityLight light, UnityIndirect gi,
 		// Lux
 		half specularIntensity,
 		half shadow)
-	//	half3 diffuseNormalWorld,
-	//	half isTransMat)
 	{
 
 		light.color *= shadow;
 
 		half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
 		half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
-
-		half nl = saturate(dot(normal, light.dir));
 
 		// BRDF expects all other inputs to be calculated up front!
 		#if defined (UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
@@ -91,5 +85,4 @@
 
 		return half4(color, 1.0h);
 	}
-
 #endif // LUX_STANDARD_BRDF_INCLUDED

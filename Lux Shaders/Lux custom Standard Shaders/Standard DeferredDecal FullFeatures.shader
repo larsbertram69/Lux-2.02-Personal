@@ -82,7 +82,6 @@ Shader "Lux/Deferred Decals/Standard Lighting/Full Features"
 
 		Blend SrcAlpha OneMinusSrcAlpha, Zero OneMinusSrcAlpha
 		Zwrite Off
-
 		CGPROGRAM
 
 		#pragma surface surf LuxStandardSpecular finalgbuffer:DecalFinalGBuffer vertex:vert exclude_path:forward exclude_path:prepass noshadow noforwardadd keepalpha

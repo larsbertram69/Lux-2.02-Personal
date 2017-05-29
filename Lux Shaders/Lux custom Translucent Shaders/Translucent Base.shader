@@ -1,6 +1,4 @@
-﻿
-
-Shader "Lux/Translucent Lighting/Base" {
+﻿Shader "Lux/Translucent Lighting/Base" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -13,7 +11,7 @@ Shader "Lux/Translucent Lighting/Base" {
 		[Header(Translucent Lighting ______________________________________________________ )]
 		[Space(4)]
 		[NoScaleOffset] _TranslucencyOcclusion ("Lokal Thickness (B) Occlusion (G)", 2D) = "white" {}
-		_TranslucenyStrength ("Translucency Strength", Range(0,1)) = 1
+		_TranslucencyStrength ("Translucency Strength", Range(0,1)) = 1
 		_ScatteringPower ("Scattering Power", Range(0,8)) = 4
 
 	}
@@ -22,7 +20,7 @@ Shader "Lux/Translucent Lighting/Base" {
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf LuxTranslucentSpecular fullforwardshadows
+		#pragma surface surf LuxTranslucentSpecular fullforwardshadows addshadow
 		#pragma multi_compile __ LUX_AREALIGHTS
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxTranslucentPBSLighting.cginc"
@@ -50,10 +48,10 @@ Shader "Lux/Translucent Lighting/Base" {
 			half4 transOcclusion = tex2D(_TranslucencyOcclusion, IN.uv_MainTex);
 			o.Occlusion = transOcclusion.g;
 		//	Lux: Write translucent lighting parameters to the output struct 
-			o.Translucency = transOcclusion.b * _TranslucenyStrength;
+			o.Translucency = transOcclusion.b * _TranslucencyStrength;
 			o.ScatteringPower = _ScatteringPower;
 		}
 		ENDCG
 	}
-	FallBack "Diffuse"
+//	FallBack "Diffuse"
 }

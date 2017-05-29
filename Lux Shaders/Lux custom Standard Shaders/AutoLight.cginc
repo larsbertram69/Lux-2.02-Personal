@@ -187,7 +187,9 @@ sampler2D _LightTextureB0;
 #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
     unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-    fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w * shadow;
+    fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w * shadow; \
+        o.Shadow = destName; \
+        o.worldPosition = worldPos;  
 #endif
 
 #ifdef DIRECTIONAL_COOKIE

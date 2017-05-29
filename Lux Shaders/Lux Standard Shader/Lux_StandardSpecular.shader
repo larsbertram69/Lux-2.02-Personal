@@ -32,7 +32,6 @@ Shader "Lux Standard (Specular setup)"
 		_BumpMap("Normal Map", 2D) = "bump" {}
 
 		_Parallax ("Height Scale", Range (0.005, 0.1)) = 0.02
-		// _Parallax ("Height Scale", Range (0.005, 0.08)) = 0.02
 		_ParallaxMap ("Height Map", 2D) = "black" {}
 		_UVRatio ("UV Ratio", Vector) = (1,1,0,0)
 		_ParallaxTiling ("Parallax Tiling", Float) = 1
@@ -131,10 +130,10 @@ Shader "Lux Standard (Specular setup)"
 			Cull [_Cull]
 
 			CGPROGRAM
-			#pragma target 4.6
+			#pragma target 3.0
 			// TEMPORARY: GLES2.0 temporarily disabled to prevent errors spam on devices without textureCubeLodEXT
 			#pragma exclude_renderers gles
-			
+			#pragma multi_compile_instancing
 
 			// -------------------------------------
 					
@@ -343,7 +342,6 @@ Shader "Lux Standard (Specular setup)"
 			// Snow
 			#pragma shader_feature _ _SNOW
 
-			
 			#if UNITY_VERSION < 560
 				#pragma multi_compile ___ UNITY_HDR_ON
 				#pragma multi_compile ___ LIGHTMAP_ON
@@ -363,7 +361,7 @@ Shader "Lux Standard (Specular setup)"
 			ENDCG
 		}
 
-				// ------------------------------------------------------------------
+		// ------------------------------------------------------------------
 		// Extracts information for lightmapping, GI (emission, albedo, ...)
 		// This pass it not used during regular rendering.
 		Pass
