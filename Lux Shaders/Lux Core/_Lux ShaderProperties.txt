@@ -69,7 +69,7 @@
 	[Space(4)]
 	[Header(Dynamic Wetness ______________________________________________________ )]
 	[Space(4)]
-	_WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
+	_WaterSlopeDamp("Water Slope Damp", Range (0.0, 2.0)) = 0.5
 	[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
 	_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 

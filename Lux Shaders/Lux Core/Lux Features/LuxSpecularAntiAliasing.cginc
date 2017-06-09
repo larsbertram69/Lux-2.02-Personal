@@ -8,6 +8,7 @@
     #if LUX_SPEC_ANITALIASING
         #define LUX_SPECULARANITALIASING \
             fixed3 worldNormalFace = WorldNormalVector(IN, half3(0,0,1)); \
+            o.worldNormalFace = worldNormalFace; \
             float roughness = 1.0 - o.Smoothness; \
             float3 deltaU = ddx( worldNormalFace ); \
             float3 deltaV = ddy( worldNormalFace ); \

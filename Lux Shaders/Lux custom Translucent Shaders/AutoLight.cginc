@@ -154,10 +154,10 @@ sampler2D _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;
 #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
     unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
-                    o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                    fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL; \
-                    o.Atten = destName; \
-                    o.worldPosition = worldPos;
+        o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+        fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL; \
+            o.Atten = destName; \
+            o.worldPosition = worldPos;
 
 #endif
 
@@ -176,10 +176,10 @@ unityShadowCoord4x4 unity_WorldToLight;
     }
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
-                    o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                    fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz); \
-                    o.Atten = destName; \
-                    o.worldPosition = worldPos;
+        o.Shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+            fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz); \
+            o.Atten = destName; \
+            o.worldPosition = worldPos;
 #endif
 
 // ---------------------------------------------------
@@ -187,10 +187,10 @@ unityShadowCoord4x4 unity_WorldToLight;
 // But we can work against it :)
 #ifdef DIRECTIONAL
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-                    fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                    o.Atten = destName; \
-                    o.Shadow = 1.0; \
-                    o.worldPosition = worldPos; 
+        fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+            o.Atten = destName; \
+            o.Shadow = 1.0; \
+            o.worldPosition = worldPos; 
 #endif
 
 // ---------------------------------------------------
@@ -200,11 +200,11 @@ unityShadowCoord4x4 unity_WorldToLight;
     sampler2D _LightTextureB0;
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
-                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                    fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w; \
-                    o.Shadow = shadow; \
-                    o.Atten = destName; \
-                    o.worldPosition = worldPos;
+        fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+            fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w; \
+            o.Shadow = shadow; \
+            o.Atten = destName; \
+            o.worldPosition = worldPos;
 #endif
 
 // ---------------------------------------------------
@@ -214,12 +214,12 @@ unityShadowCoord4x4 unity_WorldToLight;
     sampler2D _LightTexture0;
     unityShadowCoord4x4 unity_WorldToLight;
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
-                    unityShadowCoord2 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xy; \
-                    fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-                    fixed destName = tex2D(_LightTexture0, lightCoord).w * shadow; \
-                    o.Shadow = 1; \
-                    o.Atten = destName; \
-                    o.worldPosition = worldPos; 
+        unityShadowCoord2 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xy; \
+        fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
+            fixed destName = tex2D(_LightTexture0, lightCoord).w * shadow; \
+            o.Shadow = 1; \
+            o.Atten = destName; \
+            o.worldPosition = worldPos; 
 #endif
 
 // -----------------------------

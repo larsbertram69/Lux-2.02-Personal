@@ -1,0 +1,80 @@
+-------------- IMPROVEMENTS
+
+- Support for Unity 5.6. added.
+- Support for Mixed Mode Lighting and baked far shadows added.
+Lux now lets you mix baked and real time shadows. However – as this feature might involve a lot of texture lookups – complex shaders using dynamic snow, water and e.g. mix mapping might break on platforms which do not support sampler free texture lookups (like OpenGLCore on mac!?) when using forward rendering. DX11 should have no problems though.
+Adding support for mixed mode lighting meant to rework the way "shadow strength" for point and spot lights is handled as far as translucent lighting is concerned. It is a bit hacky now but still should you give nice results.
+- Globally mapped snow added which now lets you add structures like roads covered by snow without snow following the road's geometry. So roads simply blend much nicer with the surroundings.
+- Rain ripples are calculated off screen, so we can have a much higher density and better texture filtering. They also are placed much more accurately now when it comes to parallax occlusion mapping.
+- Parallax mapping slightly improved:
+It now does 2 lookups and should show less pan caking artifacts. It has become a bit more expensive though.
+- Parallax Occlusion Mapping slightly improved:
+- - UVRatio parameter added so now you can use none squared textures. Geometry however should still be scaled evenly along all three axes.
+- - Final secant search added which smoothes the overall result.
+- - You may choose between tex2Dgrad (more accurate but slower) and tex2Dlod (faster but less accurate) by editing the "Lux Config.cginc" file.
+- Anisotropic lighting improved which now gives you better fitting specular highlights and better approximated anisotropic ambient reflections. It also takes per pixel normals into account...
+- Specular anti aliasing added for deferred shaders.
+- Horizon Occlusion added which gives you nicer and less harsh ambient reflections.
+
+
+
+-------------- CHANGES
+
+Parallax Mapping and POM:
+- UV_ratio added which lets you use POM even with none squared textures. 
+- Lux Config.cginc lets you choose between tex2Dgrad (default – smoother but more expensive) and tex2Dlod (faster)
+- Deprecated: "Parallax Tiling": Renamed to "Mask Tiling": If set to >1 or < 1 the shader will do an extra texture lookup to sample the blend mask. This gives you much more flexibility – but of course costs something...
+- When using Lux's parallax function in custom surface shaders you should to declare: "#define _PARALLAXMAP" – otherwise it might not work properly.
+
+Snow:
+- Snow might be sampled in world space. ALWAYS check UV_Ratio and Size when using POM and world mapped snow.
+- Snow color changed to HDR.
+
+Rain:
+- Ripples are now calculated off screen and sampled from a generated render texture which allows us to add much more density (x2).
+- Ripples get properly distorted by POM.
+
+Specular anti aliasing:
+- New lighting feature added to the deferred shading pipeline. You may deactivate specular anti aliasing by editing the "Lux Config.cginc" file.
+
+
+Custom surface shaders:
+
+Most important:
+Due to the vast amount of internal textures Unity 5.6 uses (Light Probe Proxy Volumes, baked shadow maps, ...) i changed all surface shaders using mix mapping to use sampler free texture lookups which – at least on DX11 – allows you to use more than 16 textures. So please have a look at the provided example shaders to find out how to modify your shader code like the "Standard FullFeatures" shader.
+
+Struct Input:
+- "float3 worldPos" added
+- "float2 lux_DistanceScale" added
+- "float4 lux_worldPosDistance" removed
+
+Vertex shader:
+"o.lux_DistanceScale.x = distance(_WorldSpaceCameraPos, worldPosition);
+o.lux_DistanceScale.y = length( mul(unity_ObjectToWorld, float4(1.0, 0.0, 0.0, 0.0)) );"
+added
+
+LUX_SETUP: This macro now needs 8 instead of 7 inputs.
+- deprecated: "IN.lux_worldPosDistance"
+- added: "IN.lux_DistanceScale.x" and "IN.lux_DistanceScale.y"
+		
+LUX_DIFFUSESCATTERING_METALLIC(o.Albedo, o.Normal, IN.viewDir, o.Metallic, lux)
+now needs 4 inputs: you have to add the "lux" struct as last parameter.
+
+- When using lux parallax function in custom surface shaders you should declare: "#define _PARALLAXMAP" – otherwise it might not work properly.
+
+
+
+------ KNOWN ISSUES
+
+- Mixed mode: Baked shadows are "broken" when using forward rendering and a direction cookie light (even in standard shader).
+Bug reported (case 905727).
+- Mixed mode: We may run out of samplers (OpenGLCore on mac – works fine on Win just like DX11).
+
+
+
+------ VERTEX COLOR USAGE
+
+r: Mix Mapping
+g: Puddle Mask
+b: Snow Mask
+a: -

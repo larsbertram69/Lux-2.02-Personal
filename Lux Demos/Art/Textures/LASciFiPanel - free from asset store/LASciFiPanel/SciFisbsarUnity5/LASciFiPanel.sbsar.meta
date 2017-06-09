@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 46235810a04f84c66a1044125d2b8135
-timeCreated: 1493550256
+timeCreated: 1496133296
 licenseType: Pro
 SubstanceImporter:
   serializedVersion: 5
@@ -482,7 +482,7 @@ SubstanceImporter:
       wrapMode: 0
     - name: LASciFiPanel_specular
       alphaSource: 7
-      filterMode: 1
+      filterMode: 2
       aniso: 1
       wrapMode: 0
     - name: LASciFiPanel_emissive
@@ -517,15 +517,15 @@ SubstanceImporter:
     - shaderProp: _MainTex
       material: {instanceID: 0}
       baseUID: 932778175
-    - shaderProp: _EmissionMap
-      material: {instanceID: 0}
-      baseUID: 932778123
-    - shaderProp: _OcclusionMap
-      material: {instanceID: 0}
-      baseUID: 932778125
     - shaderProp: _ParallaxMap
       material: {instanceID: 0}
       baseUID: 912867125
+    - shaderProp: _OcclusionMap
+      material: {instanceID: 0}
+      baseUID: 932778125
+    - shaderProp: _EmissionMap
+      material: {instanceID: 0}
+      baseUID: 932778123
     - shaderProp: _SpecGlossMap
       material: {instanceID: 0}
       baseUID: 932778167

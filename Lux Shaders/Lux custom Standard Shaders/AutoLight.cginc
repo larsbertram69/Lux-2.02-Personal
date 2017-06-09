@@ -142,6 +142,7 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
 #   endif
 #endif
 
+// ---------------------------------------------------
 #ifdef POINT
 sampler2D _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;
@@ -152,7 +153,10 @@ unityShadowCoord4x4 unity_WorldToLight;
         o.Shadow = destName; \
         o.worldPosition = worldPos;
 #endif
+// o.worldNormalFace = fixed3(IN.tSpace0.z, IN.tSpace1.z, IN.tSpace2.z); \
+// this does not fix our issue... ?????
 
+// ---------------------------------------------------
 #ifdef SPOT
 sampler2D _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;
@@ -173,6 +177,7 @@ inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
         o.worldPosition = worldPos;
 #endif
 
+// ---------------------------------------------------
 #ifdef DIRECTIONAL
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
@@ -180,6 +185,7 @@ inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
         o.worldPosition = worldPos;
 #endif
 
+// ---------------------------------------------------
 #ifdef POINT_COOKIE
 samplerCUBE _LightTexture0;
 unityShadowCoord4x4 unity_WorldToLight;

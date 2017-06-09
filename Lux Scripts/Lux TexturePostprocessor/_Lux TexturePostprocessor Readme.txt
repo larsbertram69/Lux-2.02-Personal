@@ -1,7 +1,7 @@
 - - - - - - - - - - - - - - - -
 LUX TEXTUREPOSTPROCESSOR
 
-The Lux Texturepsoprocessor lets you prefilter your smoothness textures so aliasing on very smooth surfaces becomes (at least a little bit) less noticeable. 
+The Lux Texturepostprocessor lets you prefilter your smoothness textures so aliasing on very smooth surfaces becomes (at least a little bit) less noticeable. 
 The script acts as AssetPostprocessor and will automatically look for textures that fit the naming conventions mentioned below and postprocess them whenever they are updated.
 
 In order to be able to postprocess your smoothness texture – or better: the alpha channel of the "Specular Color (RGB) Smoothness (A)" or "Metallic (R) Smoothness (A)" texture the script needs the corresponding normal texture as well.

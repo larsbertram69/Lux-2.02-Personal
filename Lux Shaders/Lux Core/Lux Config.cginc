@@ -27,9 +27,14 @@
 		// Parameter definitions which might be tweaked:
 		#define SCREEN_SPACE_VARIANCE 1.0
 		#define SAATHRESHOLD 0.1
-		// 1
 	#endif
 
+	// Enable Horizon Occlusion / Set it to 1 to enable it, set it to o to disbale it (which in fact is a bit faster). 
+	#ifndef LUX_HORIZON_OCCLUSION
+		#define LUX_HORIZON_OCCLUSION 1
+		// Parameter definitions which might be tweaked:
+		#define HORIZON_FADE 1.3
+	#endif
 
 
 #endif // LUX_CONFIG_INCLUDED

@@ -64,6 +64,15 @@ inline half3 BRDF_Unity_Indirect (half3 baseColor, half3 specColor, half oneMinu
 	return c;
 }
 
+// Horizon Occlusion for Normal Mapped Reflections: http://marmosetco.tumblr.com/post/81245981087
+float GetHorizonOcclusion(float3 V, float3 normalWS, float3 vertexNormal, float horizonFade)
+{
+    float3 R = reflect(-V, normalWS);
+    float specularOcclusion = saturate(1.0 + horizonFade * dot(R, vertexNormal));
+    // smooth it
+    return specularOcclusion; // * specularOcclusion;
+}
+
 //-------------------------------------------------------------------------------------
 
 // Surface shader output structure to be used with physically
@@ -126,6 +135,13 @@ inline half4 LightingLuxStandardSpecular (SurfaceOutputLuxStandardSpecular s, ha
 	#endif
 	specularIntensity = (s.Specular.r == 0.0) ? 0.0 : specularIntensity;
 
+//	Horizon Occlusion
+	#if defined (UNITY_PASS_FORWARDBASE)
+		#if LUX_HORIZON_OCCLUSION
+			gi.indirect.specular *= GetHorizonOcclusion(viewDir, s.Normal, s.worldNormalFace, HORIZON_FADE);	
+		#endif
+	#endif
+
 //	///////////////////////////////////////	
 //	Real time lighting uses the Lux BRDF
 //	Using regular attenuation as written by autolight.cginc and this works...
@@ -150,8 +166,22 @@ inline half4 LightingLuxStandardSpecular_Deferred (SurfaceOutputLuxStandardSpecu
 	half oneMinusReflectivity;
 	s.Albedo = EnergyConservationBetweenDiffuseAndSpecular (s.Albedo, s.Specular, /*out*/ oneMinusReflectivity);
 
+//	Horizon Occlusion – legacy reflections
+	#if !UNITY_ENABLE_REFLECTION_BUFFERS
+		#if LUX_HORIZON_OCCLUSION
+			gi.indirect.specular *= GetHorizonOcclusion(viewDir, s.Normal, s.worldNormalFace, HORIZON_FADE);
+		#endif
+	#endif
+
 	half4 c = UNITY_BRDF_PBS (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, gi.light, gi.indirect);
 	c.rgb += UNITY_BRDF_GI (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, s.Occlusion, gi);
+
+//	Horizon Occlusion – deferred reflections
+	#if UNITY_ENABLE_REFLECTION_BUFFERS
+		#if LUX_HORIZON_OCCLUSION
+			s.Occlusion *= GetHorizonOcclusion(viewDir, s.Normal, s.worldNormalFace, HORIZON_FADE);
+		#endif
+	#endif
 
 	outDiffuseOcclusion = half4(s.Albedo, s.Occlusion);
 	outSpecSmoothness = half4(s.Specular, s.Smoothness);

@@ -573,6 +573,13 @@ inline UnityGI FragmentGI (FragmentCommonData s, half occlusion, half4 i_ambient
 	return FragmentGI(s, occlusion, i_ambientOrLightmapUV, atten, light, true);
 }
 
+// Horizon Occlusion for Normal Mapped Reflections: http://marmosetco.tumblr.com/post/81245981087
+float GetHorizonOcclusion(float3 V, float3 pixelNormal, float3 vertexNormal, float horizonFade)
+{
+    float3 R = reflect(V, pixelNormal);
+    float specularOcclusion = saturate(1.0 + horizonFade * dot(R, vertexNormal));
+    return specularOcclusion; // * specularOcclusion;
+}
 
 //-------------------------------------------------------------------------------------
 half4 OutputForward (half4 output, half alphaFromSurface)
@@ -765,6 +772,13 @@ half4 fragForwardBase (VertexOutputForwardBase i
 	half	nv = abs(dot(s.normalWorld, viewDir));
 	half	lv = saturate(dot(gi.light.dir, viewDir));
 	half	lh = saturate(dot(gi.light.dir, halfDir));
+
+
+//	Horizon Occlusion
+	#if LUX_HORIZON_OCCLUSION
+		float3 worldNormalFace = i.tangentToWorldAndParallax[2].xyz;
+		gi.indirect.specular *= GetHorizonOcclusion(s.eyeVec, s.normalWorld, worldNormalFace, HORIZON_FADE);	
+	#endif
 
 	half4 c = Lux_BRDF1_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, viewDir,
 		// Deferred expects these inputs to be calculates up front, forward does not. So we have to fill the input struct.
@@ -1170,7 +1184,6 @@ void fragDeferred (
 // http://jp.square-enix.com/tech/library/pdf/Error%20Reduction%20and%20Simplification%20for%20Shading%20Anti-Aliasing.pdf
 
 #if LUX_SPEC_ANITALIASING
-
 	float3 worldNormalFace = i.tangentToWorldAndParallax[2].xyz;
 	float roughness = 1.0 - s.oneMinusRoughness;
 	float3 deltaU = ddx( worldNormalFace );
@@ -1183,6 +1196,13 @@ void fragDeferred (
 
 	UnityGI gi = FragmentGI (s, occlusion, i.ambientOrLightmapUV, atten, dummyLight, sampleReflectionsInDeferred);
 
+//	Horizon Occlusion – legacy reflections
+	#if !UNITY_ENABLE_REFLECTION_BUFFERS
+		#if LUX_HORIZON_OCCLUSION
+			gi.indirect.specular *= GetHorizonOcclusion(s.eyeVec, s.normalWorld, worldNormalFace, HORIZON_FADE);
+		#endif
+	#endif
+
 	half3 color = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect).rgb;
 	color += UNITY_BRDF_GI (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, occlusion, gi);
 
@@ -1192,6 +1212,13 @@ void fragDeferred (
 
 	#ifndef UNITY_HDR_ON
 		color.rgb = exp2(-color.rgb);
+	#endif
+
+//	Horizon Occlusion – deferred reflections
+	#if UNITY_ENABLE_REFLECTION_BUFFERS
+		#if LUX_HORIZON_OCCLUSION
+			occlusion *= GetHorizonOcclusion(s.eyeVec, s.normalWorld, worldNormalFace, HORIZON_FADE);
+		#endif
 	#endif
 
 	outDiffuse = half4(s.diffColor, occlusion);

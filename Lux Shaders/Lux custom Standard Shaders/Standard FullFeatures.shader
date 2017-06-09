@@ -1,15 +1,16 @@
 ﻿Shader "Lux/Standard Lighting/Full Features" {
 	Properties {
 
+
 	//	Lux primary texture set
 		[Space(4)]
 		[Header(Primary Texture Set _____________________________________________________ )]
 		[Space(4)]
 		_Color ("Color", Color) = (1,1,1,1)
 		[Space(4)]
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_MainTex ("Albedo (RGB) Occlusion (A)", 2D) = "white" {}
 		[NoScaleOffset] _BumpMap ("Normalmap", 2D) = "bump" {}
-		[NoScaleOffset] _SpecGlossMap("Specular", 2D) = "black" {}
+		[NoScaleOffset] _SpecGlossMap("Specular", 2D) = "white" {}
 
 	//	Lux mix mapping - secondary texture set
 		[Space(4)]
@@ -56,7 +57,7 @@
 		[Space(4)]
 		[Header(Dynamic Wetness ______________________________________________________ )]
 		[Space(4)]
-		_WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
+		_WaterSlopeDamp("Water Slope Damp", Range (0.0, 2.0)) = 0.5
 		[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
 		_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 
@@ -101,24 +102,30 @@
 			#pragma multi_compile __ LUX_AREALIGHTS
 		#endif
         
-		#pragma shader_feature _SPECGLOSSMAP
-		#pragma shader_feature ___ _DETAIL_MULX2
+
+//		#pragma shader_feature ___ _DETAIL_MULX2
+		// Enable mix mapping - no multi compile here 
+		#define GEOM_TYPE_BRANCH_DETAIL
+//		#pragma shader_feature _ GEOM_TYPE_LEAF
+		// Make mix mapping use texture input
+		#define GEOM_TYPE_LEAF
+
+//		#pragma shader_feature _SPECGLOSSMAP		
+		// The shader expects 2 SpecGloss Maps – if they are not assigned the result will look odd
+		#define _SPECGLOSSMAP
 
         // Distinguish between simple parallax mapping and parallax occlusion mapping
 		#pragma shader_feature _ EFFECT_BUMP
-		// Enable mix mapping 
-		#define GEOM_TYPE_BRANCH_DETAIL
-
+		
 // Lux 2.02: Just to make sure that everything is set up properly.
 		#define _PARALLAXMAP;
-
-		// Make mix mapping use texture input
-		#pragma shader_feature _ GEOM_TYPE_LEAF
 
 		#define _SNOW
 		#define _WETNESS_FULL
 		// Allow independed puddle mask tiling
-		#pragma shader_feature _ LOD_FADE_CROSSFADE
+//		#pragma shader_feature _ LOD_FADE_CROSSFADE
+
+//#pragma multi_compile __ LOD_FADE_CROSSFADE
 
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"
@@ -140,7 +147,8 @@
 			float4 color : COLOR0;			// Important: Declare color expilicitely as COLOR0
 // Lux 2.02 new input:
 			float2 lux_DistanceScale;		// needed by various functions
-			float2 lux_flowDirection;		// needed by Water_Flow			
+			float2 lux_flowDirection;		// needed by Water_Flow	
+	
 		};
 
 		fixed4 _Color;
@@ -150,6 +158,7 @@
 		UNITY_DECLARE_TEX2D(_MainTex);
 		UNITY_DECLARE_TEX2D(_BumpMap);
 		UNITY_DECLARE_TEX2D_NOSAMPLER(_SpecGlossMap);
+// Other inputs are declared in "LuxStructs.cginc" based on GEOM_TYPE_BRANCH_DETAIL
 
 		half _Glossiness;
 		
@@ -167,10 +176,12 @@
 			float3 worldPosition = mul(unity_ObjectToWorld, v.vertex);
 			o.lux_DistanceScale.x = distance(_WorldSpaceCameraPos, worldPosition);
 			o.lux_DistanceScale.y = length( mul(unity_ObjectToWorld, float4(1.0, 0.0, 0.0, 0.0)) );
+
 		}
 
 
 		void surf (Input IN, inout SurfaceOutputLuxStandardSpecular o) {
+
 			// Initialize the Lux fragment structure. Always do this first.
 // Lux 2.02 extended parameters:
             // LUX_SETUP(float2 main UVs, float2 secondary UVs, half3 view direction in tangent space, float3 world position, float distance to camera, float2 flow direction, fixed4 vertex color, float object scale)
@@ -212,6 +223,9 @@
 
 			o.Specular = specGloss.rgb;
 			o.Smoothness = specGloss.a;
+
+			o.Occlusion = lerp( c.a, d.a, lux.mixmapValue.y);
+
 		//	In case uvs might be refracted by water ripples or water flow we will have to sample the normal a second time :-(
 // Lux 2.02 new inputs: As we use sampler bound and sampler free texture lookups we have to declare the texture lookups like this:
 			o.Normal = UnpackNormal( lerp( UNITY_SAMPLE_TEX2D(_BumpMap, lux.finalUV.xy), UNITY_SAMPLE_TEX2D_SAMPLER (_DetailNormalMap, _BumpMap, lux.finalUV.zw), lux.mixmapValue.y ) );

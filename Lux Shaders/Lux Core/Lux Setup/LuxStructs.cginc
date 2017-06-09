@@ -83,7 +83,7 @@ struct LuxFragment
     #endif
     float2 _Lux_DetailDistanceFade;
     // when using mix mapping
-    #if defined(GEOM_TYPE_BRANCH_DETAIL)
+//    #if defined(GEOM_TYPE_BRANCH_DETAIL)
         /*sampler2D _DetailAlbedoMap;
         sampler2D _DetailNormalMap;
         fixed4 _Color2;
@@ -94,7 +94,7 @@ struct LuxFragment
         fixed4 _Color2;
         fixed3 _SpecColor2;
         fixed _Glossiness2;
-    #endif
+//    #endif
 
     //  Macro to declare and intialize the LuxFragment structure
     #define LUX_SETUP(mainUV, secondaryUV, viewDir, worldPosition, distToCamera, flowDir, vColor, ObjScale) \
