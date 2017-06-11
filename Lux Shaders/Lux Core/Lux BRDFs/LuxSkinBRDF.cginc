@@ -71,6 +71,7 @@ half3 BentNormalsDiffuseLighting(float3 normal, float3 blurredNormal, float3 L, 
 			half3 lightScattering = transDot * _SubColor * light.color;
 		#endif
 
+
 	//	////////////////////////////////////////////////////////////
 	//	Final composition
 
@@ -112,7 +113,8 @@ half3 BentNormalsDiffuseLighting(float3 normal, float3 blurredNormal, float3 L, 
 					#else
 						+ surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 					#endif
-					
+//	Debug:
+//	color.rgb = light.color;					
 		return half4(color, 1.0h);
 	}
 

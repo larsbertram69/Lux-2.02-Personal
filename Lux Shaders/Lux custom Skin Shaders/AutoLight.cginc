@@ -107,6 +107,7 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
     }
     #endif
 
+
     return UnityMixRealtimeAndBakedShadows(realtimeShadowAttenuation, shadowMaskAttenuation, realtimeToBakedShadowFade);
 }
 
@@ -149,9 +150,10 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
         unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
         fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
         fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL; \
-            o.Shadow = destName; \
+            o.Shadow = shadow; \
             o.worldPosition = worldPos;
 #endif
+// was: o.Shadow = destName; \
 
 // ---------------------------------------------------
 #ifdef SPOT
@@ -170,9 +172,10 @@ half UnityComputeForwardShadows(float2 lightmapUV, float3 worldPos, float4 scree
         unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
         fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
             fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz); \
-            o.Shadow = destName; \
+            o.Shadow = shadow; \
             o.worldPosition = worldPos;
 #endif
+// was: o.Shadow = destName; \
 
 // ---------------------------------------------------
 #ifdef DIRECTIONAL

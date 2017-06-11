@@ -143,10 +143,7 @@ inline half4 LightingLuxStandardSpecular (SurfaceOutputLuxStandardSpecular s, ha
 	#endif
 
 //	///////////////////////////////////////	
-//	Real time lighting uses the Lux BRDF
-//	Using regular attenuation as written by autolight.cginc and this works...
-	s.Shadow = 1;
-
+//	Direct lighting uses the Lux BRDF
 	half4 c = Lux_BRDF1_PBS(s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir,
 		// Deferred expects these inputs to be calculates up front, custom forward does not. So we simply fill the input struct with zeros.
 		half3(0, 0, 0), 0, 0, 0, 0,
