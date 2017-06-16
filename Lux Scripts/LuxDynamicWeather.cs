@@ -293,7 +293,7 @@ public float SnowMelt = 0.0f;
 					 0.0f, 0.0f));
 
 		Shader.SetGlobalVector(RainSnowIntensityPID, new Vector3 (Rainfall, RainIntensity, SnowIntensity));
-		Shader.SetGlobalVector(WaterFloodLevelPID, new Vector4(AccumulatedCracks, AccumulatedPuddles, AccumulatedWetness * WetnessInfluenceOnAlbedo, AccumulatedWetness * WetnessInfluenceOnSmoothness));
+		Shader.SetGlobalVector(WaterFloodLevelPID, new Vector4(AccumulatedCracks, AccumulatedPuddles, AccumulatedWetness * WetnessInfluenceOnAlbedo * (1.0f - WaterToSnow), AccumulatedWetness * WetnessInfluenceOnSmoothness * (1.0f - WaterToSnow) ));
 		
 		// Textures and texture settings
 		Shader.SetGlobalTexture(SnowMaskPID, SnowMask);
