@@ -150,7 +150,7 @@ unityShadowCoord4x4 unity_WorldToLight;
     unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
     fixed destName = tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * shadow; \
-        o.Shadow = destName; \
+        o.Shadow = 1; \
         o.worldPosition = worldPos;
 #endif
 // o.worldNormalFace = fixed3(IN.tSpace0.z, IN.tSpace1.z, IN.tSpace2.z); \
@@ -173,7 +173,7 @@ inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
     unityShadowCoord4 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)); \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
     fixed destName = (lightCoord.z > 0) * UnitySpotCookie(lightCoord) * UnitySpotAttenuate(lightCoord.xyz) * shadow; \
-        o.Shadow = destName; \
+        o.Shadow = 1; \
         o.worldPosition = worldPos;
 #endif
 
@@ -181,7 +181,7 @@ inline fixed UnitySpotAttenuate(unityShadowCoord3 LightCoord)
 #ifdef DIRECTIONAL
     #define UNITY_LIGHT_ATTENUATION(destName, input, worldPos) \
         fixed destName = UNITY_SHADOW_ATTENUATION(input, worldPos); \
-        o.Shadow = destName; \
+        o.Shadow = 1; \
         o.worldPosition = worldPos;
 #endif
 
@@ -194,7 +194,7 @@ sampler2D _LightTextureB0;
     unityShadowCoord3 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xyz; \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
     fixed destName = tex2D(_LightTextureB0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL * texCUBE(_LightTexture0, lightCoord).w * shadow; \
-        o.Shadow = destName; \
+        o.Shadow = 1; \
         o.worldPosition = worldPos;  
 #endif
 
@@ -205,7 +205,7 @@ unityShadowCoord4x4 unity_WorldToLight;
     unityShadowCoord2 lightCoord = mul(unity_WorldToLight, unityShadowCoord4(worldPos, 1)).xy; \
     fixed shadow = UNITY_SHADOW_ATTENUATION(input, worldPos); \
     fixed destName = tex2D(_LightTexture0, lightCoord).w * shadow; \
-        o.Shadow = destName; \
+        o.Shadow = 1; \
         o.worldPosition = worldPos;
 #endif
 
