@@ -92,7 +92,7 @@
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags {"Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="TransparentCutout"}
 		LOD 200
 		
 	//	!!!! SINGLE SIDED GEOMETRY: Make the shader not cull the backfaces
@@ -279,5 +279,4 @@
 			ENDCG
 		}
 	}
-	FallBack "Diffuse"
 }
