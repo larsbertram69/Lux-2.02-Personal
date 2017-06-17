@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "Lux/Human/Skin" {
+﻿Shader "Lux/Human/Skin" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB) Smoothness (A)", 2D) = "white" {}
@@ -15,7 +13,7 @@ Shader "Lux/Human/Skin" {
 
 		[Header(Diffuse Bump Settings)]
 		[Space(4)]
-		_BumpBias ("Diffuse Normal Map Blur Bias", Float) = 2.0
+		_BumpBias ("Diffuse Normal Map Blur Bias", Float) = 3.0
 		_BlurStrength ("Blur Strength", Range (0,1)) = 1.0
 
 		[Header(Preintegrated Skin Lighting)]
@@ -95,7 +93,7 @@ Shader "Lux/Human/Skin" {
 				o.Normal = normalize(half3(o.Normal.xy + MicroBump.xy, o.Normal.z * MicroBump.z));
 			#endif
 
-			fixed3 blurredWorldNormal = UnpackNormal( tex2Dlod ( _BumpMap, float4 ( IN.uv_MainTex, _BumpBias, _BumpBias ) ) );
+			fixed3 blurredWorldNormal = UnpackNormal( tex2Dbias(_BumpMap, float4(IN.uv_MainTex, 0, _BumpBias)) );
 			blurredWorldNormal = normalize( lerp(o.Normal, blurredWorldNormal, _BlurStrength
 			#if defined (LUX_LIGHTINGFADE)
 				* IN.blendState ) );

@@ -148,7 +148,6 @@ inline half4 LightingLuxSkinSpecular (SurfaceOutputLuxSkinSpecular s, half3 view
 	specularIntensity = (s.Specular.r == 0.0) ? 0.0 : specularIntensity;
 	//	///////////////////////////////////////	
 
-
 //	///////////////////////////////////////	
 //	Real time lighting uses the Lux Skin BRDF
 	half4 c = LUX_SKIN_BRDF(s.Albedo, s.Specular, s.Translucency, oneMinusReflectivity, s.Smoothness, s.Normal, diffuseNormal, viewDir,
@@ -161,6 +160,7 @@ inline half4 LightingLuxSkinSpecular (SurfaceOutputLuxSkinSpecular s, half3 view
 		gi.light, gi.indirect, specularIntensity, s.Shadow, s.worldPosition);
 
 	c.rgb += UNITY_BRDF_GI (s.Albedo, s.Specular, oneMinusReflectivity, s.Smoothness, s.Normal, viewDir, s.Occlusion, gi);
+
 	c.a = outputAlpha;
 	return c;
 }
