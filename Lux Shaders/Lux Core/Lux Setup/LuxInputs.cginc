@@ -110,7 +110,7 @@ half _DiffuseScatteringContraction;
 #endif
 
 //  Translucent Lighting
-#if defined (LOD_FADE_PERCENTAGE)
+#if defined (LUX_TRANSLUCENTLIGHTING)
     half4 _Lux_Tanslucent_Settings;
     half _Lux_Translucent_NdotL_Shadowstrength;
     half _TranslucencyStrength;

@@ -65,7 +65,7 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 		[Header(Dynamic Wetness ______________________________________________________ )]
 		[Space(4)]
 		_WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
-		[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
+		[Toggle(LUX_PUDDLEMASKTILING)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
 		_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 
 		[Header(Texture Set 1)]
@@ -122,7 +122,7 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 		#define _SNOW
 		#define _WETNESS_FULL
 		// Allow independed puddle mask tiling
-		#pragma shader_feature _ LOD_FADE_CROSSFADE
+		#pragma shader_feature _ LUX_PUDDLEMASKTILING
 
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"
@@ -192,7 +192,7 @@ Shader "Lux/Standard Lighting/Full Features custom Snowmask" {
 			half4 customSnowMaskBump = tex2D(_CustomSnowMaskBump, lux.finalUV.xy * _CustomSnowMaskBumpTiling);
 			half3 customSnowNormal = UnpackNormalDXT5nm(customSnowMaskBump);
 
-			#if defined (LOD_FADE_CROSSFADE)
+			#if defined (LUX_PUDDLEMASKTILING)
 				lux.puddleMaskValue = tex2D(_ParallaxMap, lux.finalUV.xy * _PuddleMaskTiling).r;
 			#endif
 

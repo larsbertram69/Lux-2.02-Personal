@@ -51,7 +51,7 @@
             [Header(Dynamic Wetness ______________________________________________________ )]
             [Space(4)]
             _WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
-            [Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
+            [Toggle(LUX_PUDDLEMASKTILING)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
             _PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 
             [Header(Texture Set 1)]
@@ -99,7 +99,7 @@
             #define _WETNESS_FULL
 
             // Enable independed puddle mask tiling
-            #pragma shader_feature _ LOD_FADE_CROSSFADE
+            #pragma shader_feature _ LUX_PUDDLEMASKTILING
 
         //  Important: We have to declare the appdata struct before doing the includes!
             struct appdata {
@@ -157,7 +157,7 @@
             //  From now on we should use lux.finalUV (float4!) to do our texture lookups.
 
                 // In case we have enabled independent pauddle mask tiling we have to do a 2nd texture lookup.
-                #if defined (LOD_FADE_CROSSFADE)
+                #if defined (LUX_PUDDLEMASKTILING)
                     lux.puddleMaskValue = tex2D(_ParallaxMap, lux.finalUV.xy * _PuddleMaskTiling).r;
                 #endif
 

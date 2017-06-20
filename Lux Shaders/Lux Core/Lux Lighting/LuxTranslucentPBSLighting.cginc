@@ -13,8 +13,8 @@
 #include "../Lux Core/Lux Utils/LuxUtils.cginc"
 
 // keyword is needed by e.g. dynmaic weather but might not be set in case we have a custom surface shader
-#ifndef LOD_FADE_PERCENTAGE
-	#define LOD_FADE_PERCENTAGE
+#ifndef LUX_TRANSLUCENTLIGHTING
+	#define LUX_TRANSLUCENTLIGHTING
 #endif
 
 //-------------------------------------------------------------------------------------

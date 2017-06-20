@@ -247,7 +247,7 @@ struct FragmentCommonData
 	half3 tangentSpaceNormal;
 #endif
 //	Lux: Translucent Lighting
-#if defined (LOD_FADE_PERCENTAGE)
+#if defined (LUX_TRANSLUCENTLIGHTING)
 	half translucency;
 	half scatteringPower;
 #endif
@@ -373,7 +373,7 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 		#if defined (GEOM_TYPE_MESH)
 			lux.puddleMaskValue = tex2D (_ParallaxMap, lux.extrudedUV.xy * _PuddleMaskTiling).r; 
 		// Puddle Mask from vertex color – else we take the already sampled value
-		#elif !defined(LOD_FADE_CROSSFADE) && defined(_PARALLAXMAP)
+		#elif !defined(LUX_PUDDLEMASKTILING) && defined(_PARALLAXMAP)
 			lux.puddleMaskValue = lux.vertexColor.g;
 		#endif
 	#endif
@@ -434,7 +434,7 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 	#endif
 
 //	Lux: Lighting Features – Translucent Lighting
-	#if defined (LOD_FADE_PERCENTAGE)
+	#if defined (LUX_TRANSLUCENTLIGHTING)
 		// Mixmapping
 		#if defined (GEOM_TYPE_BRANCH_DETAIL)
 			// Combined maps?
@@ -460,7 +460,7 @@ inline FragmentCommonData FragmentSetup (LuxFragment lux)
 //	Lux: Apply water and snow
 	#if defined (_WETNESS_SIMPLE) || defined (_WETNESS_RIPPLES) || defined (_WETNESS_FLOW) || defined (_WETNESS_FULL) || defined (_SNOW)
 		ApplySnowAndWetness(lux, o.diffColor, o.specColor, o.oneMinusRoughness, o.occlusion, o.emission
-		#if defined (LOD_FADE_PERCENTAGE)
+		#if defined (LUX_TRANSLUCENTLIGHTING)
 			, o.translucency
 		#endif
 		);
@@ -790,7 +790,7 @@ half4 fragForwardBase (VertexOutputForwardBase i
 		specularIntensity,
 		shadow);
 
-	#if defined (LOD_FADE_PERCENTAGE)
+	#if defined (LUX_TRANSLUCENTLIGHTING)
 		half3 lightScattering = 0;
 		UNITY_BRANCH
 		if (s.scatteringPower < 0.001) {
@@ -1001,7 +1001,7 @@ half4 fragForwardAdd (VertexOutputForwardAdd i
 		shadow);
 
 //	Lux: Translucent Lighting
-	#if defined (LOD_FADE_PERCENTAGE)
+	#if defined (LUX_TRANSLUCENTLIGHTING)
 		half3 lightScattering = 0;
 		UNITY_BRANCH
 		if (s.scatteringPower < 0.001) {

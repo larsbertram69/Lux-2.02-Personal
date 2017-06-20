@@ -51,7 +51,7 @@ Shader "Lux/Deferred Decals/Standard Lighting/Full Features"
 		[Header(Dynamic Wetness ______________________________________________________ )]
 		[Space(4)]
 		_WaterSlopeDamp("Water Slope Damp", Range (0.0, 1.0)) = 0.5
-		[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
+		[Toggle(LUX_PUDDLEMASKTILING)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
 		_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 
 		[Header(Texture Set 1)]
@@ -92,7 +92,7 @@ Shader "Lux/Deferred Decals/Standard Lighting/Full Features"
 		#define _SNOW
 		#define _WETNESS_FULL
 		// Allow independed puddle mask tiling
-//		#pragma shader_feature _ LOD_FADE_CROSSFADE
+//		#pragma shader_feature _ LUX_PUDDLEMASKTILING
 
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"

@@ -435,7 +435,7 @@ void ApplySnowAndWetness (
     inout half oneMinusRoughness,
     inout half occlusion,
     inout half3 emission
-    #if defined (LOD_FADE_PERCENTAGE)
+    #if defined (LUX_TRANSLUCENTLIGHTING)
         , inout half translucency
     #endif
 )
@@ -487,7 +487,7 @@ void ApplySnowAndWetness (
                 #endif
                 // wetness.yz control smoothness/normal – so they get influenced by porosity
                 wetness.yz *= (1-porosityFactor);
-                wetness.z *= 0.5;
+                wetness.z *= 0.5;            
                 wetness = max(lux.waterAmount.xxx, wetness);
 
                 // Lerp all outputs towards water
@@ -572,7 +572,7 @@ lux.snowNormal = Lux_UnpackScaleNormal (combinedNormalSmoothness.ag, lux.normalB
     #endif
     
     emission *= suppressionFactor;
-    #if defined (LOD_FADE_PERCENTAGE)
+    #if defined (LUX_TRANSLUCENTLIGHTING)
         translucency *= suppressionFactor;
     #endif
 }
@@ -644,7 +644,7 @@ lux.snowNormal = Lux_UnpackScaleNormal (combinedNormalSmoothness.ag, lux.normalB
 
 
 //  NOTE: SnowWorldNormal has to be brought to WorldSpace
-    #if !defined (LOD_FADE_PERCENTAGE)
+    #if !defined (LUX_TRANSLUCENTLIGHTING)
         #define LUX_APPLY_DYNAMICWEATHER \
             lux.tangentNormal = o.Normal; \
             ApplySnowAndWetness(lux, o.Albedo, o.Specular, o.Smoothness, o.Occlusion, o.Emission); \

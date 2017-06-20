@@ -11,7 +11,7 @@ Shader "Lux Standard (Metallic setup)"
 		// Lighting
 	//	[MaterialEnum(Standard,0,Translucent,1,Anisotropic,2)] _Lighting ("Lighting", Range(0,2)) = 0
 		[MaterialEnum(Standard,0,Translucent,1)] _Lighting ("Lighting", Range(0,1)) = 0
-		// __ = Standard / LOD_FADE_PERCENTAGE = Translucent / LOD_FADE_CROSSFADE = aniso
+		// __ = Standard / LUX_TRANSLUCENTLIGHTING = Translucent / LUX_PUDDLEMASKTILING = aniso
 
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo", 2D) = "white" {}
@@ -164,12 +164,12 @@ Shader "Lux Standard (Metallic setup)"
 			// POM?
 			#pragma shader_feature _ EFFECT_BUMP
 			// Lighting: Standard / Translucent / Anisotropic
-			#pragma shader_feature _ LOD_FADE_PERCENTAGE 
-			// LOD_FADE_CROSSFADE
+			#pragma shader_feature _ LUX_TRANSLUCENTLIGHTING 
+			// LUX_PUDDLEMASKTILING
 			// Wetness
 			#pragma shader_feature _ _WETNESS_SIMPLE _WETNESS_RIPPLES _WETNESS_FLOW _WETNESS_FULL
-			// Puddle Mask from vertex colors or height map? LOD_FADE_CROSSFADE: puddle mask has same tiling as heigh map
-			#pragma shader_feature _ GEOM_TYPE_MESH LOD_FADE_CROSSFADE
+			// Puddle Mask from vertex colors or height map? LUX_PUDDLEMASKTILING: puddle mask has same tiling as heigh map
+			#pragma shader_feature _ GEOM_TYPE_MESH LUX_PUDDLEMASKTILING
 			// Snow
 			#pragma shader_feature _ _SNOW
 
@@ -231,12 +231,12 @@ Shader "Lux Standard (Metallic setup)"
 			// POM?
 			#pragma shader_feature _ EFFECT_BUMP
 			// Lighting: Standard / Translucent / Anisotropic
-			#pragma shader_feature _ LOD_FADE_PERCENTAGE 
-			// LOD_FADE_CROSSFADE
+			#pragma shader_feature _ LUX_TRANSLUCENTLIGHTING 
+			// LUX_PUDDLEMASKTILING
 			// Wetness
 			#pragma shader_feature _ _WETNESS_SIMPLE _WETNESS_RIPPLES _WETNESS_FLOW _WETNESS_FULL
-			// Puddle Mask from vertex colors or height map? LOD_FADE_CROSSFADE: puddle mask has same tiling as heigh map
-			#pragma shader_feature _ GEOM_TYPE_MESH LOD_FADE_CROSSFADE
+			// Puddle Mask from vertex colors or height map? LUX_PUDDLEMASKTILING: puddle mask has same tiling as heigh map
+			#pragma shader_feature _ GEOM_TYPE_MESH LUX_PUDDLEMASKTILING
 			// Snow
 			#pragma shader_feature _ _SNOW
 
@@ -337,12 +337,12 @@ Shader "Lux Standard (Metallic setup)"
 			// POM?
 			#pragma shader_feature _ EFFECT_BUMP
 			// Lighting
-			#pragma shader_feature _ LOD_FADE_PERCENTAGE 
-			// LOD_FADE_CROSSFADE
+			#pragma shader_feature _ LUX_TRANSLUCENTLIGHTING 
+			// LUX_PUDDLEMASKTILING
 			// Wetness
 			#pragma shader_feature _ _WETNESS_SIMPLE _WETNESS_RIPPLES _WETNESS_FLOW _WETNESS_FULL
-			// Puddle Mask from vertex colors or height map? LOD_FADE_CROSSFADE: puddle mask has same tiling as heigh map
-			#pragma shader_feature _ GEOM_TYPE_MESH LOD_FADE_CROSSFADE
+			// Puddle Mask from vertex colors or height map? LUX_PUDDLEMASKTILING: puddle mask has same tiling as heigh map
+			#pragma shader_feature _ GEOM_TYPE_MESH LUX_PUDDLEMASKTILING
 			// Snow
 			#pragma shader_feature _ _SNOW
 
@@ -397,8 +397,8 @@ Shader "Lux Standard (Metallic setup)"
 			#pragma shader_feature _ EFFECT_BUMP
 			// Wetness
 			#pragma shader_feature _ _WETNESS_SIMPLE _WETNESS_RIPPLES _WETNESS_FLOW _WETNESS_FULL
-			// Puddle Mask from vertex colors or height map? LOD_FADE_CROSSFADE: puddle mask has same tiling as heigh map
-			#pragma shader_feature _ GEOM_TYPE_MESH LOD_FADE_CROSSFADE
+			// Puddle Mask from vertex colors or height map? LUX_PUDDLEMASKTILING: puddle mask has same tiling as heigh map
+			#pragma shader_feature _ GEOM_TYPE_MESH LUX_PUDDLEMASKTILING
 			// Snow
 			#pragma shader_feature _ _SNOW
 

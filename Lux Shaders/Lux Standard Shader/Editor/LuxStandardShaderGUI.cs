@@ -1109,18 +1109,18 @@ GUILayout.Space(-16);
 		switch (lighting) {
 			// Standard
 			case 0:
-				material.DisableKeyword("LOD_FADE_PERCENTAGE");
-				material.DisableKeyword("LOD_FADE_CROSSFADE");
+				material.DisableKeyword("LUX_TRANSLUCENTLIGHTING");
+				material.DisableKeyword("LUX_PUDDLEMASKTILING");
 				break;
 			// Translucent
 			case 1:
-				material.EnableKeyword("LOD_FADE_PERCENTAGE");
-				material.DisableKeyword("LOD_FADE_CROSSFADE");
+				material.EnableKeyword("LUX_TRANSLUCENTLIGHTING");
+				material.DisableKeyword("LUX_PUDDLEMASKTILING");
 				break;
 			// Anisotropic
 			case 2:
-				material.DisableKeyword("LOD_FADE_PERCENTAGE");
-				material.EnableKeyword("LOD_FADE_CROSSFADE");
+				material.DisableKeyword("LUX_TRANSLUCENTLIGHTING");
+				material.EnableKeyword("LUX_PUDDLEMASKTILING");
 				break;
 		}
 	}
@@ -1169,7 +1169,7 @@ GUILayout.Space(-16);
 		switch (puddleMask) {
 			// vertex color
 			case 0:
-				material.DisableKeyword("LOD_FADE_CROSSFADE");
+				material.DisableKeyword("LUX_PUDDLEMASKTILING");
 				material.DisableKeyword("GEOM_TYPE_MESH"); // GEOM_TYPE_MESH --> puddlemask from heightmap but using custom tiling
 //Debug.Log("vertexcol");
 				break;
@@ -1177,7 +1177,7 @@ GUILayout.Space(-16);
 			case 1:
 				if (puddleMaskTiling == 1.0 && useParallax) {
 					material.DisableKeyword("GEOM_TYPE_MESH");
-					material.EnableKeyword("LOD_FADE_CROSSFADE");
+					material.EnableKeyword("LUX_PUDDLEMASKTILING");
 				}
 				else {
 					material.EnableKeyword("GEOM_TYPE_MESH");

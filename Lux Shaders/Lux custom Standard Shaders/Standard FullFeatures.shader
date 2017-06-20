@@ -58,7 +58,7 @@
 		[Header(Dynamic Wetness ______________________________________________________ )]
 		[Space(4)]
 		_WaterSlopeDamp("Water Slope Damp", Range (0.0, 2.0)) = 0.5
-		[Toggle(LOD_FADE_CROSSFADE)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
+		[Toggle(LUX_PUDDLEMASKTILING)] _EnableIndependentPuddleMaskTiling("Enable independent Puddle Mask Tiling", Float) = 0.0
 		_PuddleMaskTiling ("- Puddle Mask Tiling", Float) = 1
 
 		[Header(Texture Set 1)]
@@ -123,9 +123,9 @@
 		#define _SNOW
 		#define _WETNESS_FULL
 		// Allow independed puddle mask tiling
-//		#pragma shader_feature _ LOD_FADE_CROSSFADE
+//		#pragma shader_feature _ LUX_PUDDLEMASKTILING
 
-//#pragma multi_compile __ LOD_FADE_CROSSFADE
+//#pragma multi_compile __ LUX_PUDDLEMASKTILING
 
 		#include "../Lux Core/Lux Config.cginc"
 		#include "../Lux Core/Lux Lighting/LuxStandardPBSLighting.cginc"
@@ -199,7 +199,7 @@
 			o.Normal = UnpackNormal( lerp( UNITY_SAMPLE_TEX2D(_BumpMap, lux.finalUV.xy), UNITY_SAMPLE_TEX2D_SAMPLER (_DetailNormalMap, _BumpMap, lux.finalUV.zw), lux.mixmapValue.y ) );
 		
 			// In case independent puddle mask tiling is enabled we will have to sample _ParallaxMap again.
-			#if defined (LOD_FADE_CROSSFADE)
+			#if defined (LUX_PUDDLEMASKTILING)
 				lux.puddleMaskValue = tex2D(_ParallaxMap, lux.finalUV.xy * _PuddleMaskTiling).r;
 			#endif
 
