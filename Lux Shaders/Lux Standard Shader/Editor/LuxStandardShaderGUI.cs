@@ -888,6 +888,13 @@ GUILayout.Space(-16);
 			foreach (var obj in blendMode.targets)
 				MaterialChanged((Material)obj, m_WorkflowMode);
 		}
+
+////
+		#if UNITY_5_6_OR_NEWER
+			m_MaterialEditor.EnableInstancingField();
+	        m_MaterialEditor.DoubleSidedGIField();
+	    #endif
+
 	}
 
 

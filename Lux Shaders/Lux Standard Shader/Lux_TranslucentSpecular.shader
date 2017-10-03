@@ -174,6 +174,7 @@ Shader "Lux Translucent (Specular setup)"
 			
 			#pragma multi_compile_fwdbase
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardBase
 			#pragma fragment fragForwardBase
@@ -240,6 +241,7 @@ Shader "Lux Translucent (Specular setup)"
 			
 			#pragma multi_compile_fwdadd_fullshadows
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardAdd
 			#pragma fragment fragForwardAdd
@@ -283,6 +285,7 @@ Shader "Lux Translucent (Specular setup)"
 			#pragma shader_feature _ EFFECT_HUE_VARIATION
 			
 			#pragma multi_compile_shadowcaster
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertShadowCaster
 			#pragma fragment fragShadowCaster

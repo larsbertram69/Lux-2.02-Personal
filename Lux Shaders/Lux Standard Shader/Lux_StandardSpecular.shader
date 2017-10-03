@@ -133,7 +133,6 @@ Shader "Lux Standard (Specular setup)"
 			#pragma target 3.0
 			// TEMPORARY: GLES2.0 temporarily disabled to prevent errors spam on devices without textureCubeLodEXT
 			#pragma exclude_renderers gles
-			#pragma multi_compile_instancing
 
 			// -------------------------------------
 					
@@ -175,6 +174,7 @@ Shader "Lux Standard (Specular setup)"
 			
 			#pragma multi_compile_fwdbase
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardBase
 			#pragma fragment fragForwardBase
@@ -241,6 +241,7 @@ Shader "Lux Standard (Specular setup)"
 			
 			#pragma multi_compile_fwdadd_fullshadows
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardAdd
 			#pragma fragment fragForwardAdd
@@ -284,6 +285,7 @@ Shader "Lux Standard (Specular setup)"
 			#pragma shader_feature _ EFFECT_HUE_VARIATION
 			
 			#pragma multi_compile_shadowcaster
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertShadowCaster
 			#pragma fragment fragShadowCaster
@@ -350,6 +352,7 @@ Shader "Lux Standard (Specular setup)"
 			#else
 				#pragma multi_compile_prepassfinal
 			#endif
+			#pragma multi_compile_instancing
 			
 			#pragma vertex vertDeferred
 			#pragma fragment fragDeferred

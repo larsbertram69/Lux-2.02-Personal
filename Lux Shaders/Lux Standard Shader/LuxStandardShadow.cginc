@@ -27,6 +27,10 @@
 #define UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT 1
 #endif
 
+#ifdef UNITY_STEREO_INSTANCING_ENABLED
+#define UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT 1
+#endif
+
 
 half4       _Color;
 half        _Cutoff;
@@ -104,6 +108,7 @@ struct VertexInput
             #endif
         #endif
     #endif
+    UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 #ifdef UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT
@@ -129,6 +134,13 @@ struct VertexOutputShadowCaster
 };
 #endif
 
+#ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
+struct VertexOutputStereoShadowCaster
+{
+    UNITY_VERTEX_OUTPUT_STEREO
+};
+#endif
+
 
 // We have to do these dances of outputting SV_POSITION separately from the vertex shader,
 // and inputting VPOS in the pixel shader, since they both map to "POSITION" semantic on
@@ -137,10 +149,17 @@ struct VertexOutputShadowCaster
 
 void vertShadowCaster (VertexInput v,
     #ifdef UNITY_STANDARD_USE_SHADOW_OUTPUT_STRUCT
-    out VertexOutputShadowCaster o,
+        out VertexOutputShadowCaster o,
+    #endif
+    #ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
+        out VertexOutputStereoShadowCaster os,
     #endif
     out float4 opos : SV_POSITION)
 {
+    UNITY_SETUP_INSTANCE_ID(v);
+    #ifdef UNITY_STANDARD_USE_STEREO_SHADOW_OUTPUT_STRUCT
+        UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(os);
+    #endif
     TRANSFER_SHADOW_CASTER_NOPOS(o,opos)
     #if defined(UNITY_STANDARD_USE_SHADOW_UVS)
         o.tex = TRANSFORM_TEX(v.uv0, _MainTex);

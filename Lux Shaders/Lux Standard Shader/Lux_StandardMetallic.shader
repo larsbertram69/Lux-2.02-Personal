@@ -178,6 +178,7 @@ Shader "Lux Standard (Metallic setup)"
 			
 			#pragma multi_compile_fwdbase
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardBase
 			#pragma fragment fragForwardBase
@@ -245,6 +246,7 @@ Shader "Lux Standard (Metallic setup)"
 			
 			#pragma multi_compile_fwdadd_fullshadows
 			//#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertForwardAdd
 			#pragma fragment fragForwardAdd
@@ -288,6 +290,7 @@ Shader "Lux Standard (Metallic setup)"
 			#pragma shader_feature _ EFFECT_HUE_VARIATION
 			
 			#pragma multi_compile_shadowcaster
+			#pragma multi_compile_instancing
 
 			#pragma vertex vertShadowCaster
 			#pragma fragment fragShadowCaster
@@ -354,6 +357,7 @@ Shader "Lux Standard (Metallic setup)"
 			#else
 				#pragma multi_compile_prepassfinal
 			#endif
+			#pragma multi_compile_instancing
 			
 			#pragma vertex vertDeferred
 			#pragma fragment fragDeferred
