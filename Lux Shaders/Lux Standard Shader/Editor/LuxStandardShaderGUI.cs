@@ -370,6 +370,16 @@ public static GUIContent combineMapText = new GUIContent("Combined Map", "Detail
 		EditorGUIUtility.labelWidth = 0f;
 		var MyGuiContent = new GUIContent ("Lable", "Tooltip");
 
+
+		// check lighting!
+		if(material.shader == Shader.Find("Lux Translucent (Specular setup)")) {
+			lighting.floatValue = 1.0f;	
+		}
+		else {
+			lighting.floatValue = 0.0f;
+		}
+
+
 		// Detect any changes to the material
 		EditorGUI.BeginChangeCheck();
 		{
